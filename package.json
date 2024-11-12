@@ -12,17 +12,24 @@
     "@irys/upload": "^0.0.14",
     "@irys/upload-ethereum": "^0.0.14",
     "@rainbow-me/rainbowkit": "^2.1.5",
-    "@tanstack/react-query": "^5.51.11",
+    "@tanstack/react-query": "^5.59.20",
+    "@uiw/react-md-editor": "^4.0.4",
+    "@web3modal/wagmi": "^5.1.11",
     "ethers": "^6.13.2",
     "next": "^14.2.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "viem": "2.17.0",
-    "wagmi": "^2.12.0"
+    "react-markdown": "^9.0.1",
+    "react-toastify": "^10.0.6",
+    "viem": "^2.17.0",
+    "wagmi": "^2.12.30"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
     "@types/react": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
     "typescript": "5.4.2"
   }
 }

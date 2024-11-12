@@ -1,10 +1,11 @@
+"use client"
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import {
   rootstockTestnet
 } from 'wagmi/chains';
 
 export const config = getDefaultConfig({
-  appName: 'RainbowKit App',
+  appName: 'Crowd Funding Application',
   projectId: 'YOUR_PROJECT_ID',
   chains: [
     rootstockTestnet,

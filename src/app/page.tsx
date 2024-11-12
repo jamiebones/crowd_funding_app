@@ -1,7 +1,7 @@
+"use client";
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 import { useState } from 'react'
 import { useReadContract, useWriteContract } from 'wagmi'
 
@@ -41,22 +41,22 @@ const Home: NextPage = () => {
   // }
 
   return (
-    <div className={styles.container}>
-      <Head>
+    <div>
+      {/* <Head>
         <title>Crowd Funding App Backed by Bitcoin</title>
         <meta
           content="A crowd funding application backed by bitcoin; deployed to the Rootstock network"
           name="description"
         />
         <link href="/favicon.ico" rel="icon" />
-      </Head>
+      </Head> */}
 
-      <main className={styles.main}>
+      <main>
         <ConnectButton />
 
        
 
-        <section className={styles.card}>
+        <section>
          
           
         </section>
@@ -64,7 +64,7 @@ const Home: NextPage = () => {
         
       </main>
 
-      <footer className={styles.footer}>
+      <footer>
        
       </footer>
     </div>
