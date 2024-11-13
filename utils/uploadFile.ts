@@ -2,12 +2,7 @@
 import { Uploader } from "@irys/upload";
 import { Arbitrum } from "@irys/upload-ethereum";
 
-interface Tags {
-    tags?: {
-        name: string;
-        value: string;
-    }[];
-}
+
  
 const getIrysUploader = async () => {
   const rpcURL = "https://endpoints.omniatech.io/v1/arbitrum/sepolia/public"; 
@@ -34,27 +29,30 @@ const fundNode = async () => {
 }
 
 
-const uploadData = async (dataToUpload: string, tags: Tags) => {
+const uploadData = async (dataToUpload: string | Buffer, tags: any) => {
     const irys = await getIrysUploader();
 try {
 	const receipt = await irys.upload(dataToUpload, tags);
 	console.log(`Data uploaded ==> https://gateway.irys.xyz/${receipt.id}`);
+  if ( receipt ){
     return receipt.id;
+  }
+  return null;
 } catch (e) {
 	console.log("Error uploading data ", e);
 }
 }
 
-const uploadFile = async (fileToUpload: string, tags: Tags) => {
-    const irys = await getIrysUploader();
-try {
-	const response = await irys.uploadFile(fileToUpload, tags);
-	console.log(`File uploaded ==> https://gateway.irys.xyz/${response.id}`);
-    return response.id;
-} catch (e) {
-	console.log("Error uploading file ", e);
-}
-}
+// const uploadFile = async (fileToUpload: string | Buffer, tags: Tags) => {
+//     const irys = await getIrysUploader();
+// try {
+// 	const response = await irys.uploadFile(fileToUpload, tags);
+// 	console.log(`File uploaded ==> https://gateway.irys.xyz/${response.id}`);
+//     return response.id;
+// } catch (e) {
+// 	console.log("Error uploading file ", e);
+// }
+// }
 
 
-export { fundNode, uploadData, uploadFile }
+export { fundNode, uploadData }

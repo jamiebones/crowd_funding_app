@@ -1,8 +1,7 @@
 "use client";
-
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 const Navbar = () => {
-    return <h1>Navbar here:::</h1>
-}
-
+  return <ConnectButton />;
+};
 
 export default Navbar;

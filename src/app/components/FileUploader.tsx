@@ -48,12 +48,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesChange }) => {
     onFilesChange(filesRef.current);
   };
 
-  // Clean up object URLs on component unmount
-  // useEffect(() => {
-  //   return () => {
-  //     fileUrls.forEach((ele) => URL.revokeObjectURL(ele.url));
-  //   };
-  // }, [fileUrls]);
 
 
   return (
