@@ -48,6 +48,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesChange }) => {
     onFilesChange(filesRef.current);
   };
 
+  const removeFilePreview = () => {
+     setFileUrls([]);
+     setFileCount(0);
+  }
+
+ 
+
 
 
   return (

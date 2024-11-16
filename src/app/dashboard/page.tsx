@@ -5,20 +5,33 @@ import FileUploader from "../components/FileUploader";
 import { toast } from "react-toastify";
 import { useReadContract, useWriteContract, useAccount } from "wagmi";
 import { ethers } from "ethers";
+
 import CrowdFundingFactoryABI from "../../../abis/CrowdFundingFactory.json";
 const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "0x";
 
+const eth = 1_000_000_000_000_000_000;
 //interfaces
 import CreateProjectInterface from "../interfaces/CreateProjectInterface";
+
+const categoryOptions = [
+  { name: "Education", value: "Education" },
+  { name: "Philanthrophy", value: "Philanthrophy" },
+  { name: "Science", value: "Science" },
+  { name: "Music", value: "Music" },
+  { name: "Charity", value: "Charity" },
+];
 
 const CreateProject = () => {
   const [formData, setFormData] = useState<CreateProjectInterface>({
     markdownContent: "",
+    title: "",
     date: "",
     amount: 0,
+    category: "",
   });
   const [selFiles, setSelFiles] = useState<File[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [projectFee, setProjectFee] = useState<undefined | number>(undefined);
   const { address } = useAccount();
 
   const {
@@ -30,16 +43,19 @@ const CreateProject = () => {
     isError,
   } = useWriteContract();
 
-//   const { data: fee, isLoading: isLoadingFee } = useReadContract({
-//     address: factoryContractAddress as any,
-//     abi: CrowdFundingFactoryABI,
-//     functionName: "getOptionsCount",
-//   });
+  const { data: fee, isLoading: isLoadingFee } = useReadContract({
+    address: factoryContractAddress as any,
+    abi: CrowdFundingFactoryABI,
+    functionName: "getContractCreationFee",
+  });
 
+  useEffect(() => {
+    if (fee && !isLoadingFee) {
+      setProjectFee(+fee.toString());
+    }
+  }, [isLoadingFee, fee]);
 
-  const loadProjectCreationFee = async () => {
-
-  }
+  const loadProjectCreationFee = async () => {};
 
   const handleMarkdownChange = (content: string | undefined) => {
     setFormData((prevData) => ({
@@ -53,19 +69,19 @@ const CreateProject = () => {
       toast.success(`Transaction hash: ${hash}`, {
         position: "top-right",
       });
+      //handleRemoveFilePreview();
+      window.location.reload();
     }
   }, [hash, isSuccess]);
 
   useEffect(() => {
     if (isError) {
-        console.log("Error from mutation ", error)
+      console.log("Error from mutation ", error);
       toast.error(`Error sending transaction`, {
         position: "top-right",
       });
     }
   }, [isError]);
-
-  
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevData) => ({ ...prevData, date: event.target.value }));
@@ -79,21 +95,38 @@ const CreateProject = () => {
     }));
   };
 
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      title: value || "",
+    }));
+  };
+
+  const handleCategoryChange = (event: any) => {
+    const value = event.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      category: value,
+    }));
+  };
+
   const handleonFilesChange = (files: File[]) => {
     setSelFiles(files);
   };
 
   const handleWriteContract = (args: any) => {
     try {
-     console.log("writing to rootstock")
+      console.log("writing to rootstock");
+      const fee = projectFee ? projectFee / eth : 0;
       writeContract({
         address: factoryContractAddress as any,
         abi: CrowdFundingFactoryABI,
         functionName: "createNewCrowdFundingContract",
-        args: [args.fundingDetailsId, args.amount, BigInt(args.duration)],
-        value: ethers.parseEther("0.001")
+        args: [args.fundingDetailsId, args.amount, BigInt(args.duration), args.category],
+        value: ethers.parseEther(fee.toFixed(18)),
       });
-      console.log("finishing writing to Rootstock")
+      console.log("finishing writing to Rootstock");
     } catch (error) {
       console.log("Error sending transaction ", error);
       toast.error("Error sending transaction", {
@@ -107,10 +140,20 @@ const CreateProject = () => {
       selFiles.length === 0 &&
       formData.markdownContent === "" &&
       formData.amount === 0 &&
-      formData.date === ""
+      formData.date === "" &&
+      formData.title === "" && formData.category == ""
     )
       return;
     try {
+      const conData = `
+        Title: ${formData.title} 
+        Details ${formData.markdownContent.substring(0, 150)}
+        Amount ${formData.amount}
+        Date ${formData.date}
+        Category ${formData.category}
+        Project Fee ${projectFee && projectFee}
+      `;
+      if (!confirm(conData)) return;
       setUploadingFiles(true);
       const formdata = new FormData();
       selFiles.forEach((file) => {
@@ -119,7 +162,7 @@ const CreateProject = () => {
       formdata.append("projectDetails", JSON.stringify(formData));
       const response = await fetch("/api/upload", {
         method: "POST",
-        body: formdata
+        body: formdata,
       });
       setUploadingFiles(false);
       if (response.ok) {
@@ -129,6 +172,7 @@ const CreateProject = () => {
           fundingDetailsId: transID,
           amount: ethers.parseEther(formData.amount.toString()),
           duration: Date.parse(formData.date),
+          category: formData.category
         };
         handleWriteContract(args);
       } else {
@@ -148,6 +192,47 @@ const CreateProject = () => {
     <div>
       {address ? (
         <div className="p-4 bg-gray-100 rounded-lg shadow-md width-full mx-auto space-y-4">
+          <p>
+            Project creation fee:{" "}
+            {isLoadingFee ? (
+              <span>loading project fee</span>
+            ) : (
+              <span>{(projectFee! / eth).toFixed(18)} RBTC</span>
+            )}
+          </p>
+
+          <div className="flex flex-col space-y-2">
+            <label
+              htmlFor="category"
+              className="text-sm font-medium text-gray-700"
+            >
+              Select Category
+            </label>
+            <select
+              value={formData.category}
+              onChange={handleCategoryChange}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            >
+              <option value="">select project category</option>
+              {categoryOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2 w-full">
+            <label className="block text-gray-700 font-semibold">
+              Project Title
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={handleTitleChange}
+              className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
           {/* Markdown Editor */}
           <div className="space-y-2">
             <label className="block text-gray-700 font-semibold">

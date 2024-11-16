@@ -2,6 +2,10 @@ import {NextApiRequest, NextApiResponse } from "next";
 import {fundNode, uploadData } from "../../../../utils/uploadFile";
 import { NextResponse, NextRequest } from "next/server";
 
+import { generateTurbo, 
+  uploadFileToArweaveUsingTurbo2, 
+  createJSONFile, deleteJSONFile, writeFileToTempDir } from "../../../../utils/uploadFileTurbo";
+
 
 type Results = {
     transactionIds: string[];
@@ -12,6 +16,7 @@ type Project = {
   markdownContent: string;
   amount: string;
   date: string;
+  title: string;
 }
 
 
@@ -21,22 +26,26 @@ export async function POST(req: Request, res: Response) {
             const files = formdata.getAll("files") as File[];
             let project = formdata.get("projectDetails") as string;
             let details: Project = JSON.parse(project) as Project
-            console.log(details)
+            
             let results: Results = {
                 transactionIds: [],
                 errors: []
               };
-          
+    const turbo = await generateTurbo();
         // Upload each file
     for (const file of files) {
         try {
-          const arrayBuffer = await file.arrayBuffer();
-          const fileBuffer = Buffer.from(arrayBuffer);
+          //const arrayBuffer = await file.arrayBuffer();
+          //const fileBuffer = Buffer.from(arrayBuffer);
+          const filePath = await writeFileToTempDir(file);
           const tags = [ {name: "Content-Type", value: file.type}]
-          const transID = await uploadData(fileBuffer, tags);
+          const transID = await uploadFileToArweaveUsingTurbo2(turbo, filePath, tags)
+          //const transID = await uploadData(fileBuffer, tags);
           console.log(`Transaction ${transID} uploaded`);
+          deleteJSONFile(filePath);
           if ( transID ){
-            results.transactionIds.push(transID);
+            const combineIDnType = transID.concat(`:${file.type}`)
+            results.transactionIds.push(combineIDnType);
           }
   
         } catch (error: any) {
@@ -48,12 +57,17 @@ export async function POST(req: Request, res: Response) {
          details: details.markdownContent,
          amount: details.amount,
          date: details.date,
-         media: results.transactionIds
+         media: results.transactionIds,
+         title: details.title
       }
 
-      let stringifyData = JSON.stringify(projectData);
+      //let stringifyData = JSON.stringify(projectData);
+      const filePath = createJSONFile(projectData)
+      const tags = [{name: "Content-Type", value: "application/json"}]
       try {
-        const transID = await uploadData(stringifyData, null);
+
+        const transID = await uploadFileToArweaveUsingTurbo2(turbo,filePath, tags);
+        deleteJSONFile(filePath);
         return NextResponse.json(transID, {
           status: 200
         })

@@ -4,6 +4,8 @@ interface CreateProject {
     markdownContent: string;
     date: string;
     amount: number;
+    title: string;
+    category: string;
 }
 
 

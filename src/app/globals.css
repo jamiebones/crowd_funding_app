@@ -17,3 +17,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
