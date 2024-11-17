@@ -6,8 +6,6 @@ import Navbar from "./components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 import AppKitProvider from "../context";
-
-
 import './globals.css';
 
 

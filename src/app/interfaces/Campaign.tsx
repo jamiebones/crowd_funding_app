@@ -14,10 +14,12 @@ interface Campaign {
     category: string;
     owner: CampaignOwner;
     dateCreated: string;
+    projectDuration: string;
     contractAddress: string;
     amountSought:string;
     amountRaised: string;
     backers: string;
+    id: string;
 }
 
 

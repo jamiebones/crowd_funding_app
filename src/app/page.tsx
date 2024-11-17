@@ -1,52 +1,24 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, TrendingUp, Users, Target } from 'lucide-react';
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-
 import { useQuery } from '@tanstack/react-query';
 import { getCampaigns } from "../../lib/queries/fetchCampaign";
 import CampaignDisplay from './components/CampaignDisplay';
 
+
 const CrowdfundingLanding = () => {
-
-    const [campaigns, setCampaigns ] = useState([]);
-
     const { data, error, isLoading } = useQuery({
     queryKey: ['campaigns'],
     queryFn: getCampaigns
   });
 
-   console.log("data ", data);
-
-   
-
-  //  useEffect(()=> {
-  //   if (!isLoading && data ){
-  //     console.log("data ", data);
-  //     setCampaigns(data);
-  //   }
-
-  //  }, [data, isLoading])
   
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <header className="bg-white">
-        <div className="container mx-auto px-4 py-8">
-          <nav className="flex justify-between items-center mb-16">
-            <h1 className="text-2xl font-bold text-blue-600">CrowdFund</h1>
-            <div className="hidden md:flex space-x-6">
-              <Button variant="ghost">How it Works</Button>
-              <Button variant="ghost">Browse Projects</Button>
-    
-            </div>
-            <div className="space-x-4">
-              <ConnectButton/>
-              <Button>Start Project</Button>
-            </div>
-          </nav>
+        <div className="container mx-auto px-4 py-4">
 
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-8 md:mb-0">

@@ -1,10 +1,10 @@
 import {NextApiRequest, NextApiResponse } from "next";
-import {fundNode, uploadData } from "../../../../utils/uploadFile";
+import {fundNode, uploadData } from "../../../utils/uploadFile";
 import { NextResponse, NextRequest } from "next/server";
 
 import { generateTurbo, 
   uploadFileToArweaveUsingTurbo2, 
-  createJSONFile, deleteJSONFile, writeFileToTempDir } from "../../../../utils/uploadFileTurbo";
+  createJSONFile, deleteJSONFile, writeFileToTempDir } from "../../../utils/uploadFileTurbo";
 
 
 type Results = {

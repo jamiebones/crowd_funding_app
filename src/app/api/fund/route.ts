@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
-import {fundNode} from "../../../../utils/uploadFile";
+import {fundNode} from "../../../utils/uploadFile";
 
 
 
