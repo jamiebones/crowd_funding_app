@@ -34,7 +34,7 @@ const ProjectDetailsPage: React.FC<ProjectDetailsProps> = ({ params }) => {
       {isLoading && <p>Loading......</p>}
 
       {data && error == null && (
-        <ProjectDetailsComponent campaign={data.campaign} />
+        <ProjectDetailsComponent campaign={data.campaign} id={id}/>
       )}
     </div>
   );

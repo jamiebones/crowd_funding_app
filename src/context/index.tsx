@@ -1,5 +1,4 @@
 'use client'
-
 import React, { ReactNode } from 'react'
 import '@rainbow-me/rainbowkit/styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -19,9 +18,7 @@ export default function AppKitProvider({
     <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
     <RainbowKitProvider>
-
         {children}
-
     </RainbowKitProvider>
     </QueryClientProvider>
     </WagmiProvider>

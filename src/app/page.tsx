@@ -90,11 +90,8 @@ const CrowdfundingLanding = () => {
               />
             </div>
           </div>
-
-         
              {isLoading && <p>Loading ......</p>}
               {!isLoading && data && error == null && <CampaignDisplay campaigns={data.campaigns} /> } 
-        
         </div>
       </section>
     </div>

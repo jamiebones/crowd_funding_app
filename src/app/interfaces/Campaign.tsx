@@ -18,7 +18,8 @@ interface Campaign {
     contractAddress: string;
     amountSought:string;
     amountRaised: string;
-    backers: string;
+    donors: string[]
+    backers: number;
     id: string;
 }
 

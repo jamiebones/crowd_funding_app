@@ -1,5 +1,5 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { rootstockTestnet  } from 'wagmi/chains'
+import { rootstockTestnet, localhost  } from 'wagmi/chains'
 
 // Get projectId from https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
@@ -19,7 +19,7 @@ export const config = getDefaultConfig({
     projectId,
     chains: [
       rootstockTestnet,
-      ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [rootstockTestnet] : []),
+      ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [rootstockTestnet, localhost] : []),
     ],
     ssr: true,
   });

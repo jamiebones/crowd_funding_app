@@ -7,7 +7,7 @@ import { useReadContract, useWriteContract, useAccount } from "wagmi";
 import { ethers } from "ethers";
 
 import CrowdFundingFactoryABI from "../../../abis/CrowdFundingFactory.json";
-const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "0x";
+const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS_LOCAL || "0x";
 
 const eth = 1_000_000_000_000_000_000;
 //interfaces
@@ -43,19 +43,21 @@ const CreateProject = () => {
     isError,
   } = useWriteContract();
 
-  const { data: fee, isLoading: isLoadingFee } = useReadContract({
+  const { data: fee, isLoading: isLoadingFee, error:readError } = useReadContract({
     address: factoryContractAddress as any,
     abi: CrowdFundingFactoryABI,
     functionName: "getContractCreationFee",
   });
 
   useEffect(() => {
+  console.log("error: ", readError)
+    console.log("creation fee: ", fee)
     if (fee && !isLoadingFee) {
+      console.log("creation fee: ", fee)
       setProjectFee(+fee.toString());
     }
   }, [isLoadingFee, fee]);
 
-  const loadProjectCreationFee = async () => {};
 
   const handleMarkdownChange = (content: string | undefined) => {
     setFormData((prevData) => ({
@@ -123,7 +125,7 @@ const CreateProject = () => {
         address: factoryContractAddress as any,
         abi: CrowdFundingFactoryABI,
         functionName: "createNewCrowdFundingContract",
-        args: [args.fundingDetailsId, args.amount, BigInt(args.duration), args.category],
+        args: [args.fundingDetailsId, args.amount, args.duration, args.category],
         value: ethers.parseEther(fee.toFixed(18)),
       });
       console.log("finishing writing to Rootstock");
@@ -148,38 +150,34 @@ const CreateProject = () => {
       const conData = `
         Title: ${formData.title} 
         Details ${formData.markdownContent.substring(0, 150)}
-        Amount ${formData.amount}
+        Amount ${ethers.parseEther(formData.amount.toString())} RBTC
         Date ${formData.date}
         Category ${formData.category}
-        Project Fee ${projectFee && projectFee}
+        Project Creation Fee ${projectFee && projectFee}
       `;
       if (!confirm(conData)) return;
-      setUploadingFiles(true);
-      const formdata = new FormData();
-      selFiles.forEach((file) => {
-        formdata.append("files", file);
-      });
-      formdata.append("projectDetails", JSON.stringify(formData));
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formdata,
-      });
-      setUploadingFiles(false);
-      if (response.ok) {
-        const transID = await response.json();
+      
+      // formdata.append("projectDetails", JSON.stringify(formData));
+      // const response = await fetch("/api/upload", {
+      //   method: "POST",
+      //   body: formdata,
+      // });
+      // setUploadingFiles(false);
+      // if (response.ok) {
+        //const transID = await response.json();
         //save the stuff at Rootstock
         const args = {
-          fundingDetailsId: transID,
+          fundingDetailsId: "transID",
           amount: ethers.parseEther(formData.amount.toString()),
-          duration: Date.parse(formData.date),
+          duration: BigInt(Date.parse(formData.date)),
           category: formData.category
         };
-        handleWriteContract(args);
-      } else {
-        toast.error("Error uploading documents", {
-          position: "top-right",
-        });
-      }
+        handleWriteContract(args as unknown);
+      // } else {
+      //   toast.error("Error uploading documents", {
+      //     position: "top-right",
+      //   });
+      // }
     } catch (error) {
       toast.error("Error calling method", {
         position: "top-right",

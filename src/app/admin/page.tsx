@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import { ethers } from "ethers";
 import CrowdFundingFactoryABI from "../../../abis/CrowdFundingFactory.json";
-const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "0x";
+const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS_LOCAL || "0x";
 
 const Admin = () => {
   const [funding, setFunding] = useState(false);
@@ -27,6 +27,7 @@ const Admin = () => {
       toast.success(`Transaction hash: ${hash}`, {
         position: "top-right",
       });
+      setInputValue("");
     }
   }, [hash, isSuccess]);
 
@@ -48,6 +49,7 @@ const Admin = () => {
       abi: CrowdFundingFactoryABI,
       functionName: "changeFundingFee",
       args: [ethers.parseEther(inputValue.toString())],
+
     });
   };
 

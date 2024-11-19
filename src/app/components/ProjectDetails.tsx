@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -21,28 +21,74 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { FileText, ImageIcon, ExternalLink } from "lucide-react";
 import Campaign from "../interfaces/Campaign";
-import { getDaysBetweenEpochAndCurrent } from "@/utils/utility";
+import { getDaysBetweenEpochAndCurrent, isPdf, countUniqueBackers } from "@/utils/utility";
+import { toast } from "react-toastify";
+import { useWriteContract, useAccount } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
+import { ethers } from "ethers";
+
+
+import CrowdFundingContractABI from "../../../abis/CrowdFundingImplementation.json";
+const eth = 1_000_000_000_000_000_000;
 
 interface ProjectDetailsProps {
   campaign: Campaign;
+  id: string;
 }
 
-const isPdf = (url: string = "") => {
-  const spString = url.split(":");
-  console.log(spString);
-  if (spString && spString[1].includes("pdf")) {
-    return true;
-  }
-  return false;
-};
-
 // Rest of the component remains exactly the same
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
   const [donationAmount, setDonationAmount] = useState("");
+  const { address } = useAccount();
+  const queryClient = useQueryClient();
+
+  const {
+    data: hash,
+    error,
+    writeContract,
+    isSuccess,
+    isPending,
+    isError,
+  } = useWriteContract();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(`Transaction hash: ${hash}`, {
+        position: "top-right",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["projectDetails", id],
+    })
+    }
+  }, [hash, isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      console.log("Error from mutation ", error);
+      toast.error(`Error sending transaction: ${error.message}`, {
+        position: "top-right",
+      });
+    }
+  }, [isError]);
 
   const handleDonate = (amount: string) => {
-    console.log(`Processing donation of $${amount}`);
-    // Handle donation logic here
+    try {
+      const conData = `You are donating ${amount} RBTC`;
+      if ( !confirm(conData)) return;
+      console.log("start writing to Rootstock");
+      writeContract({
+        address: campaign.contractAddress as any,
+        abi: CrowdFundingContractABI,
+        functionName: "giveDonationToCause",
+        args: [],
+        value: ethers.parseEther(amount),
+      });
+    } catch (error) {
+      console.log("Error sending transaction ", error);
+      toast.error("Error sending transaction", {
+        position: "top-right",
+      });
+    }
   };
 
   return (
@@ -56,22 +102,22 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
                 <div className="flex flex-wrap items-center gap-4 mb-4">
                   <Badge variant="secondary">{campaign.category}</Badge>
                   <Badge variant="outline">
-                    {getDaysBetweenEpochAndCurrent(+campaign.projectDuration)} day(s)
-                    left
+                    {getDaysBetweenEpochAndCurrent(+campaign.projectDuration)}{" "}
+                    day(s) left
                   </Badge>
                 </div>
                 <CardTitle className="text-3xl mb-2">
-                  {campaign.content.title}
+                  {campaign?.content?.title}
                 </CardTitle>
                 <CardDescription className="text-lg">
-                  {campaign.backers} backers
+                  {countUniqueBackers(campaign.donors as any)} backers
                 </CardDescription>
               </CardHeader>
 
               <CardContent>
                 {/* Media Gallery */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                  {campaign.content.media.map((url, index) => (
+                  {campaign?.content?.media?.map((url, index) => (
                     <Dialog key={index}>
                       <DialogTrigger asChild>
                         <Button
@@ -126,7 +172,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
 
                 {/* Project Content */}
                 <div className="prose max-w-none">
-                  {campaign.content.details
+                  {campaign?.content?.details && campaign.content.details
                     .split("\n\n")
                     .map((paragraph, index) => (
                       <p key={index} className="mb-4">
@@ -150,10 +196,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="font-medium">
-                        {campaign.amountRaised.toLocaleString()} RBTC
+                        {+campaign.amountRaised.toString()/ 1e18} RBTC
                       </span>
                       <span className="text-gray-500">
-                        of {campaign.amountSought.toLocaleString()} RBTC
+                        of {+campaign.amountSought.toString() / 1e18} RBTC
                       </span>
                     </div>
                     <Progress
@@ -170,19 +216,24 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
                         )}
                         % funded
                       </span>
-                      <span>{getDaysBetweenEpochAndCurrent(+campaign.projectDuration)} day(s) left</span>
+                      <span>
+                        {getDaysBetweenEpochAndCurrent(
+                          +campaign.projectDuration
+                        )}{" "}
+                        day(s) left
+                      </span>
                     </div>
                   </div>
 
                   {/* Quick Donation Buttons */}
                   <div className="grid grid-cols-2 gap-4">
-                    {[10, 25, 50, 100].map((amount) => (
+                    {[0.01, 0.1, 0.25, 1].map((amount) => (
                       <Button
                         key={amount}
                         variant="outline"
                         onClick={() => setDonationAmount(amount.toString())}
                       >
-                        ${amount}
+                        {amount} RBTC
                       </Button>
                     ))}
                   </div>
@@ -190,9 +241,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
                   {/* Custom Donation Input */}
                   <div className="space-y-4">
                     <div className="relative">
-                      <span className="absolute left-3 top-2.5 text-gray-500">
-                        $
-                      </span>
                       <Input
                         type="number"
                         value={donationAmount}
@@ -200,16 +248,21 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
                         className="pl-8"
                         placeholder="Enter amount"
                       />
+                      <span className="absolute left-3 top-2.5 text-gray-500"></span>
                     </div>
-                    <Button
-                      className="w-full"
-                      onClick={() => handleDonate(donationAmount)}
-                      disabled={
-                        !donationAmount || parseFloat(donationAmount) <= 0
-                      }
-                    >
-                      Back this project
-                    </Button>
+                    {!address ? (
+                      <p>Connect your wallet to make a donation</p>
+                    ) : (
+                      <Button
+                        className="w-full"
+                        onClick={() => handleDonate(donationAmount)}
+                        disabled={
+                         isPending || !donationAmount || parseFloat(donationAmount) <= 0 
+                        }
+                      >
+                        Back this project
+                      </Button>
+                    )}
                   </div>
 
                   {/* Project Stats */}
@@ -217,13 +270,15 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign }) => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Backers</span>
                       <span className="font-medium">
-                        {campaign?.backers?.toString()}
+                        {countUniqueBackers(campaign.donors as any)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Time left</span>
                       <span className="font-medium">
-                        {getDaysBetweenEpochAndCurrent(+campaign.projectDuration)} {" "}
+                        {getDaysBetweenEpochAndCurrent(
+                          +campaign.projectDuration
+                        )}{" "}
                         days
                       </span>
                     </div>
