@@ -1,3 +1,4 @@
+import Milestone from "./Milestone";
 
 interface CampaignContent {
     media: string[];
@@ -21,7 +22,11 @@ interface Campaign {
     donors: string[]
     backers: number;
     id: string;
+    milestone: Milestone[]
 }
+
+
+
 
 
 export default Campaign

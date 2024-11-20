@@ -21,13 +21,13 @@ const ProjectDetailsPage: React.FC<ProjectDetailsProps> = ({ params }) => {
     enabled: !!id,
   });
 
-  console.log("campaign data ", data);
+  
 
   console.log("error", error);
 
-  useEffect(() => {
-    //getCampaign();
-  }, [id]);
+  // useEffect(() => {
+  //   //getCampaign();
+  // }, [id]);
 
   return (
     <div className="p-4">

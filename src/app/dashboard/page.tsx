@@ -50,10 +50,7 @@ const CreateProject = () => {
   });
 
   useEffect(() => {
-  console.log("error: ", readError)
-    console.log("creation fee: ", fee)
     if (fee && !isLoadingFee) {
-      console.log("creation fee: ", fee)
       setProjectFee(+fee.toString());
     }
   }, [isLoadingFee, fee]);
@@ -156,28 +153,31 @@ const CreateProject = () => {
         Project Creation Fee ${projectFee && projectFee}
       `;
       if (!confirm(conData)) return;
-      
-      // formdata.append("projectDetails", JSON.stringify(formData));
-      // const response = await fetch("/api/upload", {
-      //   method: "POST",
-      //   body: formdata,
-      // });
-      // setUploadingFiles(false);
-      // if (response.ok) {
-        //const transID = await response.json();
+      let formdata = new FormData()
+      selFiles.map((f: File) => {
+        formdata.append("files", f);
+      })
+      formdata.append("projectDetails", JSON.stringify(formData));
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formdata,
+      });
+      setUploadingFiles(false);
+      if (response.ok) {
+        const transID = await response.json();
         //save the stuff at Rootstock
         const args = {
-          fundingDetailsId: "transID",
+          fundingDetailsId: transID,
           amount: ethers.parseEther(formData.amount.toString()),
           duration: BigInt(Date.parse(formData.date)),
           category: formData.category
         };
         handleWriteContract(args as unknown);
-      // } else {
-      //   toast.error("Error uploading documents", {
-      //     position: "top-right",
-      //   });
-      // }
+      } else {
+        toast.error("Error uploading documents", {
+          position: "top-right",
+        });
+      }
     } catch (error) {
       toast.error("Error calling method", {
         position: "top-right",

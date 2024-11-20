@@ -22,57 +22,52 @@ type Project = {
 
 export async function POST(req: Request, res: Response) {
         if (req.method === 'POST') {
-    //         const formdata = await req.formData();
-    //         const files = formdata.getAll("files") as File[];
-    //         let project = formdata.get("projectDetails") as string;
-    //         let details: Project = JSON.parse(project) as Project
+            const formdata = await req.formData();
+            const files = formdata.getAll("files") as File[];
+            let project = formdata.get("projectDetails") as string;
+            let details: Project = JSON.parse(project) as Project
             
-    //         let results: Results = {
-    //             transactionIds: [],
-    //             errors: []
-    //           };
-    // const turbo = await generateTurbo();
-    //     // Upload each file
-    // for (const file of files) {
-    //     try {
-    //       //const arrayBuffer = await file.arrayBuffer();
-    //       //const fileBuffer = Buffer.from(arrayBuffer);
-    //       const filePath = await writeFileToTempDir(file);
-    //       const tags = [ {name: "Content-Type", value: file.type}]
-    //       const transID = await uploadFileToArweaveUsingTurbo2(turbo, filePath, tags)
-    //       //const transID = await uploadData(fileBuffer, tags);
-    //       console.log(`Transaction ${transID} uploaded`);
-    //       deleteJSONFile(filePath);
-    //       if ( transID ){
-    //         const combineIDnType = transID.concat(`:${file.type}`)
-    //         results.transactionIds.push(combineIDnType);
-    //       }
+            let results: Results = {
+                transactionIds: [],
+                errors: []
+              };
+    const turbo = await generateTurbo();
+        // Upload each file
+    for (const file of files) {
+        try {
+          //const arrayBuffer = await file.arrayBuffer();
+          //const fileBuffer = Buffer.from(arrayBuffer);
+          const filePath = await writeFileToTempDir(file);
+          const tags = [ {name: "Content-Type", value: file.type}]
+          const transID = await uploadFileToArweaveUsingTurbo2(turbo, filePath, tags)
+          //const transID = await uploadData(fileBuffer, tags);
+          console.log(`Transaction ${transID} uploaded`);
+          deleteJSONFile(filePath);
+          if ( transID ){
+            const combineIDnType = transID.concat(`:${file.type}`)
+            results.transactionIds.push(combineIDnType);
+          }
   
-    //     } catch (error: any) {
-    //       console.error(`Error uploading file in index ${file.name}:`, error);
-    //     }
-    //   }
+        } catch (error: any) {
+          console.error(`Error uploading file in index ${file.name}:`, error);
+        }
+      }
       
-    //   let projectData = {
-    //      details: details.markdownContent,
-    //      amount: details.amount,
-    //      date: details.date,
-    //      media: results.transactionIds,
-    //      title: details.title
-    //   }
+      let projectData = {
+         details: details.markdownContent,
+         amount: details.amount || "",
+         date: details.date || "",
+         media: results.transactionIds,
+         title: details.title
+      }
 
-    //   //let stringifyData = JSON.stringify(projectData);
-    //   const filePath = createJSONFile(projectData)
-    //   const tags = [{name: "Content-Type", value: "application/json"}]
-    //   try {
+      const filePath = createJSONFile(projectData)
+      const tags = [{name: "Content-Type", value: "application/json"}]
+      try {
 
-    //     const transID = await uploadFileToArweaveUsingTurbo2(turbo,filePath, tags);
-    //     deleteJSONFile(filePath);
-    //     return NextResponse.json(transID, {
-    //       status: 200
-    //     })
-    try {
-        return NextResponse.json("pppppppppppp", {
+        const transID = await uploadFileToArweaveUsingTurbo2(turbo,filePath, tags);
+        deleteJSONFile(filePath);
+        return NextResponse.json(transID, {
           status: 200
         })
       } catch (error: any) {

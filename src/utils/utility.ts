@@ -24,10 +24,14 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
     return false;
   };
 
-  const countUniqueBackers = function countUniqueBackers(array = []) {
-    let nondubArray = []
+  interface Donor {
+     donor: string
+  }
+
+  const countUniqueBackers = function countUniqueBackers(array:Donor[] = []) {
+    let nondubArray:string[] = []
     for (let i=0; i < array.length; i++){
-      const donor = array[i].donor;
+      const donor = array[i].donor as string;
       if (!nondubArray.includes(donor)){
         nondubArray.push(donor)
       }

@@ -12,7 +12,9 @@ const CrowdfundingLanding = () => {
     queryKey: ['campaigns'],
     queryFn: getCampaigns
   });
+  
 
+  console.log("campaigns ", data)
   
   return (
     <div className="min-h-screen bg-gray-50">
