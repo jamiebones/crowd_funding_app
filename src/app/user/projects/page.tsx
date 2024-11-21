@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import UserProjects from "@/app/components/UserProjects";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
@@ -20,8 +20,6 @@ const UserProjectsPage = () => {
         enabled: !!address,
       });
 
-      console.log("user projects ", data)
-      console.log("error fetching projects ", error);
 
 
     return (

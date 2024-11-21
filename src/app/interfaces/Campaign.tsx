@@ -22,7 +22,8 @@ interface Campaign {
     donors: string[]
     backers: number;
     id: string;
-    milestone: Milestone[]
+    milestone: Milestone[];
+    campaignRunning: boolean;
 }
 
 

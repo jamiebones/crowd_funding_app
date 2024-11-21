@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-
 import {
   Dialog,
   DialogContent,
@@ -15,8 +14,6 @@ import {
 
 import CampaignCreator from "../interfaces/CampaignCreator";
 import Campaign from "../interfaces/Campaign";
-import Milestone from "../interfaces/Milestone";
-
 import MilestoneForm from "./MilestoneForm";
 import MilestoneCard from "./MilestoneCard";
 
@@ -53,6 +50,18 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
       {/* Projects List - Mobile First Responsive */}
       <div className="w-full md:w-1/2 lg:w-2/5 space-y-4 md:pr-4">
         <h2 className="text-2xl font-bold mb-4">My Projects</h2>
+
+        <div className="flex flex-col">
+          <p className="text-sm text-muted-foreground">
+            <span className="pr-1">Fund received</span>
+            {+projects.fundingGiven.toString() / 1e18} RBTC
+          </p>
+
+          <p className="text-sm text-muted-foreground">
+            <span className="pr-1">Fund withdrawn</span>
+            {+projects.fundingWithdrawn.toString() / 1e18} RBTC
+          </p>
+        </div>
         {projects.createdCampaigns.map((project: Campaign) => (
           <Card
             key={project.id}
@@ -105,8 +114,8 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
                   <p className="text-muted-foreground">
                     {selectedProject.content?.details}
                   </p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
+                  <div className="flex flex-row justify-center">
+                    <div className="flex-1">
                       <h3 className="text-sm font-semibold text-muted-foreground">
                         Fundraising Goal
                       </h3>
@@ -115,7 +124,7 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
                         RBTC
                       </p>
                     </div>
-                    <div>
+                    <div className="">
                       <h3 className="text-sm font-semibold text-muted-foreground">
                         Amount Raised
                       </h3>
@@ -139,7 +148,7 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
                     <p className="text-sm text-muted-foreground">
                       Deadline:{" "}
                       {new Date(
-                        +selectedProject.projectDuration 
+                        +selectedProject.projectDuration
                       ).toDateString()}
                     </p>
                   </div>
@@ -154,7 +163,8 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
             </Card>
 
             {/* Milestones Section */}
-
+            
+            <div className="mt-1">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Project Milestones</CardTitle>
@@ -187,6 +197,7 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
                 </div>
               </CardContent>
             </Card>
+            </div>
           </div>
         ) : (
           <Card className="h-full flex items-center justify-center">
