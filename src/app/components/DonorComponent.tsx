@@ -6,12 +6,15 @@ import { Activity, Clock, Wallet } from 'lucide-react';
 import Donor from '../interfaces/Donor';
 import { getDaysBetweenEpochAndCurrent } from '@/utils/utility';
 
+import MilestonesAccordion from './MilestoneAccordianComponent';
+
 interface DonationProps {
     donations: Donor[]
 }
 
 
 const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
+    console.log("my donations ", donations);
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
@@ -38,7 +41,7 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-semibold">
-                        {donatingTo?.content?.title}
+                        {donatingTo?.content?.title || "The day the suspect came to roast"}
                       </h3>
                       <div className="mt-2 flex items-center space-x-2">
                         <Badge variant="secondary">
@@ -74,6 +77,11 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
                       View Contract
                     </a>
                   </div>
+
+                     {/* Milestones Accordion */}
+                {donatingTo?.milestone && donatingTo.milestone.length > 0 && (
+                  <MilestonesAccordion milestones={donatingTo.milestone} currentMilestone={donation.donatingTo.currentMilestone}/>
+                )}
                 </div>
               );
             })}

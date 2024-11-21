@@ -1,9 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
 import Milestone from "../interfaces/Milestone";
-import React from "react";
+
 
 interface MilestoneCardProps {
   milestone: Milestone;
