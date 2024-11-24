@@ -16,6 +16,7 @@ import CampaignCreator from "../interfaces/CampaignCreator";
 import Campaign from "../interfaces/Campaign";
 import MilestoneForm from "./MilestoneForm";
 import MilestoneCard from "./MilestoneCard";
+import { useRouter } from "next/navigation";
 
 interface CampaignCreatorProps {
   projects: CampaignCreator;
@@ -23,18 +24,8 @@ interface CampaignCreatorProps {
 
 const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState<Campaign | null>(null);
-  const [newMilestone, setNewMilestone] = useState({
-    id: "",
-    milestoneCID: "",
-    milestonestatus: "",
-    periodToVote: "",
-    dateCreated: "",
-    content: {
-      media: [],
-      details: "",
-      title: "",
-    },
-  });
+  const router = useRouter();
+ 
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -45,6 +36,25 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
   const calculateProgress = (raised: number, goal: number): number =>
     Math.round((raised / goal) * 100);
 
+  if (!projects) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center p-8 space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            No Project 
+          </h2>
+          <p className="text-gray-600 mb-4 max-w-md">
+            You haven't created any projects yet
+          </p>
+          <Button onClick={()=>router.push("/dashboard")}
+           className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+            Create a project
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 p-4">
       {/* Projects List - Mobile First Responsive */}
@@ -54,7 +64,7 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
         <div className="flex flex-col">
           <p className="text-sm text-muted-foreground">
             <span className="pr-1">Fund received</span>
-            {+projects.fundingGiven.toString() / 1e18} RBTC
+            {+projects?.fundingGiven?.toString() / 1e18} RBTC
           </p>
 
           <p className="text-sm text-muted-foreground">
@@ -163,40 +173,40 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
             </Card>
 
             {/* Milestones Section */}
-            
+
             <div className="mt-1">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Project Milestones</CardTitle>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>Add Milestone</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create New Milestone</DialogTitle>
-                    </DialogHeader>
-                    <MilestoneForm
-                      contractAddress={selectedProject?.contractAddress}
-                      closeDialog={closeDialog}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {selectedProject?.milestone?.length ? (
-                    selectedProject?.milestone.map((milestone) => (
-                      <MilestoneCard milestone={milestone} />
-                    ))
-                  ) : (
-                    <p className="text-center text-muted-foreground">
-                      No milestones created yet
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>Project Milestones</CardTitle>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button>Add Milestone</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Create New Milestone</DialogTitle>
+                      </DialogHeader>
+                      <MilestoneForm
+                        contractAddress={selectedProject?.contractAddress}
+                        closeDialog={closeDialog}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {selectedProject?.milestone?.length ? (
+                      selectedProject?.milestone.map((milestone) => (
+                        <MilestoneCard milestone={milestone} />
+                      ))
+                    ) : (
+                      <p className="text-center text-muted-foreground">
+                        No milestones created yet
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         ) : (

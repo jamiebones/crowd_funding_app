@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { clipTextToWords, countUniqueBackers } from "../../utils/utility";
 import Link from "next/link";
+import Donor from "../interfaces/Donor";
+
 
 interface CampaignDisplayProps {
   campaigns: Campaign[];
@@ -56,7 +58,7 @@ const CampaignDisplay: React.FC<CampaignDisplayProps> = ({ campaigns }) => {
               <div className="flex justify-between text-sm text-gray-500">
                 
                 <span>Goal: {+campaign?.amountSought?.toLocaleString() / 1e18} RBTC</span>
-                <span>{countUniqueBackers(campaign.donors)} backers</span>
+                <span>{countUniqueBackers(campaign.donors as any)} backers</span>
               </div>
               <Link
                 href={`/projects/${campaign.id}`}

@@ -77,10 +77,13 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
                       View Contract
                     </a>
                   </div>
+                  
 
                      {/* Milestones Accordion */}
                 {donatingTo?.milestone && donatingTo.milestone.length > 0 && (
-                  <MilestonesAccordion milestones={donatingTo.milestone} currentMilestone={donation.donatingTo.currentMilestone}/>
+                  <MilestonesAccordion milestones={donatingTo.milestone} 
+                  currentMilestone={donation.donatingTo.currentMilestone} 
+                  contractAddress={donatingTo.contractAddress}/>
                 )}
                 </div>
               );

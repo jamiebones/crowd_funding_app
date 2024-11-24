@@ -65,7 +65,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
   useEffect(() => {
     if (isError) {
       console.log("Error from mutation ", error);
-      toast.error(`Error sending transaction: ${error.message}`, {
+      toast.error(`Error sending transaction: ${error?.message}`, {
         position: "top-right",
       });
     }

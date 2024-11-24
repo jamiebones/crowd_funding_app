@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="flex flex-col min-h-screen">
               <Navbar />
       
-            <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-12">
+            <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-6">
               {/* Main Content Area */}
 
               {children}
