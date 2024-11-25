@@ -1,39 +1,56 @@
 "use client";
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Search, TrendingUp, Users, Target } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Search, TrendingUp, Users, Target } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { getCampaigns } from "../../lib/queries/fetchCampaign";
-import CampaignDisplay from './components/CampaignDisplay';
-
+import { getStats } from "../../lib/queries/getStats";
+import CampaignDisplay from "./components/CampaignDisplay";
+import { useRouter } from "next/navigation";
 
 const CrowdfundingLanding = () => {
-    const { data, error, isLoading } = useQuery({
-    queryKey: ['campaigns'],
-    queryFn: getCampaigns
+  const router = useRouter();
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["campaigns"],
+    queryFn: getCampaigns,
   });
-  
 
-  console.log("campaigns ", data)
-  
+  const {
+    data: stats,
+    error: statsError,
+    isLoading: statsLoading,
+  } = useQuery({
+    queryKey: ["stats"],
+    queryFn: getStats,
+  });
+
+  console.log("stats ", stats);
+
+  console.log("stats error", statsError);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <header className="bg-white">
         <div className="container mx-auto px-4 py-4">
-
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Bring Your Ideas to Life
               </h2>
               <p className="text-gray-600 text-lg mb-8">
-                Join our community of creators and backers. Fund innovative projects
-                and help shape the future.
+                Join our community of creators and backers. Fund innovative
+                projects and help shape the future.
               </p>
               <div className="space-x-4">
-                <Button size="lg">Start a Project</Button>
-                <Button size="lg" variant="outline">
+                <Button size="lg" onClick={() => router.push("/dashboard")}>
+                  Start a Project
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => router.push("/explore")}
+                >
                   Explore Projects
                 </Button>
               </div>
@@ -56,22 +73,28 @@ const CrowdfundingLanding = () => {
             <div className="flex items-center space-x-4">
               <Target className="w-12 h-12" />
               <div>
-                <h3 className="text-3xl font-bold">$2.5M+</h3>
+                <h3 className="text-3xl font-bold">
+                  ${stats && +stats.statistics[0].totalFundingRequest / 1e18}+
+                </h3>
                 <p>Total Funded</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <Users className="w-12 h-12" />
               <div>
-                <h3 className="text-3xl font-bold">15K+</h3>
+                <h3 className="text-3xl font-bold">
+                  {stats && +stats.statistics[0].totalBackers}+
+                </h3>
                 <p>Active Backers</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <TrendingUp className="w-12 h-12" />
               <div>
-                <h3 className="text-3xl font-bold">500+</h3>
-                <p>Successful Projects</p>
+                <h3 className="text-3xl font-bold">
+                  {stats && stats.statistics[0].totalContracts}+
+                </h3>
+                <p>Created Contracts</p>
               </div>
             </div>
           </div>
@@ -92,8 +115,10 @@ const CrowdfundingLanding = () => {
               />
             </div>
           </div>
-             {isLoading && <p>Loading ......</p>}
-              {!isLoading && data && error == null && <CampaignDisplay campaigns={data.campaigns} /> } 
+          {isLoading && <p>Loading ......</p>}
+          {!isLoading && data && error == null && (
+            <CampaignDisplay campaigns={data.campaigns} />
+          )}
         </div>
       </section>
     </div>
@@ -101,13 +126,3 @@ const CrowdfundingLanding = () => {
 };
 
 export default CrowdfundingLanding;
-
-
-
-
-
-
-
-
-
-
