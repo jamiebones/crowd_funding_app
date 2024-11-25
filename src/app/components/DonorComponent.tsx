@@ -1,20 +1,71 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Activity, Clock, Wallet } from 'lucide-react';
 import Donor from '../interfaces/Donor';
 import { getDaysBetweenEpochAndCurrent } from '@/utils/utility';
+import { useWriteContract } from "wagmi";
+import { toast } from "react-toastify";
 
 import MilestonesAccordion from './MilestoneAccordianComponent';
+
+import CrowdFundingImplementationABI from "../../../abis/CrowdFundingImplementation.json";
 
 interface DonationProps {
     donations: Donor[]
 }
 
-
 const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
-    console.log("my donations ", donations);
+
+  const {
+    data: hash,
+    error,
+    writeContract,
+    isSuccess,
+    isPending,
+    isError,
+  } = useWriteContract();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(`Transaction hash: ${hash}`, {
+        position: "top-right",
+      });
+      //handleRemoveFilePreview();
+      window.location.reload();
+    }
+  }, [hash, isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      console.log("Error from mutation ", error);
+      toast.error(`Error sending transaction`, {
+        position: "top-right",
+      });
+    }
+  }, [isError]);
+
+  const handleRetrieveDonationContract = (contractAddress: string) => {
+    try {
+      console.log("writing to rootstock");
+      writeContract({
+        address: contractAddress as any,
+        abi: CrowdFundingImplementationABI,
+        functionName: "retrieveDonatedAmount",
+        args: [],
+     
+      });
+      console.log("finishing writing to Rootstock");
+    } catch (error) {
+      console.log("Error sending transaction ", error);
+      toast.error("Error sending transaction", {
+        position: "top-right",
+      });
+    }
+  };
+  
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
@@ -85,6 +136,16 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
                   currentMilestone={donation.donatingTo.currentMilestone} 
                   contractAddress={donatingTo.contractAddress}/>
                 )}
+
+                {/*button to withdraw your donation */}
+
+                <div className='mt-3 text-center'>
+                  <Button size="sm" color='info' 
+                    disabled={isPending}
+                    onClick={()=>handleRetrieveDonationContract(donatingTo.contractAddress)}>
+                    Retrieve Donation
+                  </Button>
+                </div>
                 </div>
               );
             })}

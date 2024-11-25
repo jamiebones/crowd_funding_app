@@ -21,6 +21,7 @@ interface Campaign {
     amountRaised: string;
     currentMilestone: string;
     donors: string[]
+    donorsRecall: string[]
     backers: number;
     id: string;
     milestone: Milestone[];

@@ -74,7 +74,8 @@ const CrowdfundingLanding = () => {
               <Target className="w-12 h-12" />
               <div>
                 <h3 className="text-3xl font-bold">
-                  ${stats && +stats.statistics[0].totalFundingRequest / 1e18}+
+                  $RBTC{stats && +stats?.statistics[0]?.totalFundingRequest / 1e18 
+                  ? +stats?.statistics[0]?.totalFundingRequest / 1e18 : 0 }+
                 </h3>
                 <p>Total Funded</p>
               </div>
@@ -83,7 +84,7 @@ const CrowdfundingLanding = () => {
               <Users className="w-12 h-12" />
               <div>
                 <h3 className="text-3xl font-bold">
-                  {stats && +stats.statistics[0].totalBackers}+
+                  {stats && +stats?.statistics[0]?.totalBackers ? +stats?.statistics[0]?.totalBackers : 0}+
                 </h3>
                 <p>Active Backers</p>
               </div>
@@ -92,7 +93,7 @@ const CrowdfundingLanding = () => {
               <TrendingUp className="w-12 h-12" />
               <div>
                 <h3 className="text-3xl font-bold">
-                  {stats && stats.statistics[0].totalContracts}+
+                  {stats && stats?.statistics[0]?.totalContracts ? stats?.statistics[0]?.totalContracts: 0}+
                 </h3>
                 <p>Created Contracts</p>
               </div>

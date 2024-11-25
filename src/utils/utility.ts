@@ -28,6 +28,10 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
      donor: string
   }
 
+  interface DonorRecall {
+    donor: string;
+  }
+
   const countUniqueBackers = function countUniqueBackers(array:Donor[] = []) {
     let nondubArray:string[] = []
     for (let i=0; i < array.length; i++){
@@ -38,6 +42,11 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
     }
     return nondubArray.length;
   }
+
+  function countUniqueDonors(arrayOne: Donor[], arrayTwo: DonorRecall[]) {
+    const donorSetTwo = new Set(arrayTwo.map(obj => obj.donor));
+    const uniqueDonorsCount = arrayOne.filter(obj => !donorSetTwo.has(obj.donor)).length;
+    return uniqueDonorsCount;
+  }
   
-  
-  export { clipTextToWords, getDaysBetweenEpochAndCurrent, isPdf, countUniqueBackers}
+  export { clipTextToWords, getDaysBetweenEpochAndCurrent, isPdf, countUniqueBackers, countUniqueDonors}

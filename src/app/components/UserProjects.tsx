@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -17,16 +17,23 @@ import Campaign from "../interfaces/Campaign";
 import MilestoneForm from "./MilestoneForm";
 import MilestoneCard from "./MilestoneCard";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { useWriteContract, useAccount, useReadContract } from "wagmi";
+import LoadingComponent from "./LoadingComponent";
+
+import CrowdFundingImplementationABI from "../../../abis/CrowdFundingImplementation.json";
 
 interface CampaignCreatorProps {
   projects: CampaignCreator;
 }
 
+type ProjectDetails = [string, number, number];
+
 const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState<Campaign | null>(null);
+  const [shouldDisableWithdrawal, setShouldDisableWithdrawal] = useState(false);
+  const { address } = useAccount();
   const router = useRouter();
- 
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const closeDialog = () => {
@@ -36,18 +43,96 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
   const calculateProgress = (raised: number, goal: number): number =>
     Math.round((raised / goal) * 100);
 
+  const {
+    data: hash,
+    error,
+    writeContract,
+    isSuccess,
+    isPending,
+    isError,
+  } = useWriteContract();
+
+  const shouldFetch = !!selectedProject?.contractAddress;
+
+  const {
+    data: projectDetails,
+    isLoading,
+    error: readDetailsError,
+  } = useReadContract({
+    address: selectedProject?.contractAddress as any ?? undefined,
+    abi: CrowdFundingImplementationABI,
+    functionName: "getFundingDetails",
+  
+  });
+
+  useEffect(()=> {
+    if ( projectDetails ){
+      const details = projectDetails as ProjectDetails;
+      const projectDuration = +details[1].toString() / 1000;
+      const currentEpoch = Math.floor(Date.now() / 1000);
+      console.log(projectDuration, currentEpoch)
+      if ( currentEpoch < projectDuration ){
+        setShouldDisableWithdrawal(true)
+      } else{
+        setShouldDisableWithdrawal(false)
+      }
+    }
+
+  }, [projectDetails])
+
+ 
+
+
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(`Transaction hash: ${hash}`, {
+        position: "top-right",
+      });
+      //handleRemoveFilePreview();
+      window.location.reload();
+    }
+  }, [hash, isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      console.log("Error from mutation ", error);
+      toast.error(`Error sending transaction`, {
+        position: "top-right",
+      });
+    }
+  }, [isError]);
+
+  const withdrawMilestoneAmount = (contractAddress: string) => {
+    try {
+      console.log("writing to rootstock");
+      writeContract({
+        address: contractAddress as any,
+        abi: CrowdFundingImplementationABI,
+        functionName: "withdrawMilestone",
+        args: [],
+      });
+      console.log("finishing writing to Rootstock");
+    } catch (error) {
+      console.log("Error sending transaction ", error);
+      toast.error("Error sending transaction", {
+        position: "top-right",
+      });
+    }
+  };
+
   if (!projects) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-8 space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            No Project 
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">No Project</h2>
           <p className="text-gray-600 mb-4 max-w-md">
             You haven't created any projects yet
           </p>
-          <Button onClick={()=>router.push("/dashboard")}
-           className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button
+            onClick={() => router.push("/dashboard")}
+            className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
             Create a project
           </Button>
         </div>
@@ -162,11 +247,22 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
                       ).toDateString()}
                     </p>
                   </div>
-                  <div className="flex space-x-2">
-                    {/* <Button className="w-full">Edit Project</Button>
-                    <Button variant="outline" className="w-full">
-                      Share
-                    </Button> */}
+                  <div className="flex mx-auto justify-center">
+                    {isLoading ? (
+                      <LoadingComponent />
+                    ) : (
+                      <Button
+                        className="w-1/2"
+                        disabled={shouldDisableWithdrawal || !address || isPending}
+                        onClick={() =>
+                          withdrawMilestoneAmount(
+                            selectedProject.contractAddress
+                          )
+                        }
+                      >
+                        Withdraw milestone
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

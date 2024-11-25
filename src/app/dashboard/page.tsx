@@ -153,6 +153,7 @@ const CreateProject = () => {
         Project Creation Fee ${projectFee && projectFee}
       `;
       if (!confirm(conData)) return;
+      setUploadingFiles(true);
       let formdata = new FormData()
       selFiles.map((f: File) => {
         formdata.append("files", f);
