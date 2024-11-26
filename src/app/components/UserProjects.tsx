@@ -70,7 +70,6 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
       const details = projectDetails as ProjectDetails;
       const projectDuration = +details[1].toString() / 1000;
       const currentEpoch = Math.floor(Date.now() / 1000);
-      console.log(projectDuration, currentEpoch)
       if ( currentEpoch < projectDuration ){
         setShouldDisableWithdrawal(true)
       } else{

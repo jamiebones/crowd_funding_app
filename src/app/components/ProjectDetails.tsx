@@ -21,12 +21,16 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { FileText, ImageIcon, ExternalLink } from "lucide-react";
 import Campaign from "../interfaces/Campaign";
-import { getDaysBetweenEpochAndCurrent, isPdf, countUniqueBackers } from "@/utils/utility";
+import {
+  getDaysBetweenEpochAndCurrent,
+  isPdf,
+  countUniqueBackers,
+} from "@/utils/utility";
 import { toast } from "react-toastify";
 import { useWriteContract, useAccount } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { ethers } from "ethers";
-
+import DisplayDonorsToProject from "./DisplayDonorsToProject";
 
 import CrowdFundingContractABI from "../../../abis/CrowdFundingImplementation.json";
 const eth = 1_000_000_000_000_000_000;
@@ -58,7 +62,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
       });
       queryClient.invalidateQueries({
         queryKey: ["projectDetails", id],
-    })
+      });
     }
   }, [hash, isSuccess]);
 
@@ -74,7 +78,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
   const handleDonate = (amount: string) => {
     try {
       const conData = `You are donating ${amount} RBTC`;
-      if ( !confirm(conData)) return;
+      if (!confirm(conData)) return;
       console.log("start writing to Rootstock");
       writeContract({
         address: campaign.contractAddress as any,
@@ -172,16 +176,21 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
 
                 {/* Project Content */}
                 <div className="prose max-w-none">
-                  {campaign?.content?.details && campaign.content.details
-                    .split("\n\n")
-                    .map((paragraph, index) => (
-                      <p key={index} className="mb-4">
-                        {paragraph}
-                      </p>
-                    ))}
+                  {campaign?.content?.details &&
+                    campaign.content.details
+                      .split("\n\n")
+                      .map((paragraph, index) => (
+                        <p key={index} className="mb-4">
+                          {paragraph}
+                        </p>
+                      ))}
                 </div>
               </CardContent>
             </Card>
+            <DisplayDonorsToProject
+              donors={campaign.donors}
+              donorsRecall={campaign.donorsRecall}
+            />
           </div>
 
           {/* Donation Sidebar */}
@@ -196,7 +205,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="font-medium">
-                        {+campaign.amountRaised.toString()/ 1e18} RBTC
+                        {+campaign.amountRaised.toString() / 1e18} RBTC
                       </span>
                       <span className="text-gray-500">
                         of {+campaign.amountSought.toString() / 1e18} RBTC
@@ -257,7 +266,9 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                         className="w-full"
                         onClick={() => handleDonate(donationAmount)}
                         disabled={
-                         isPending || !donationAmount || parseFloat(donationAmount) <= 0 
+                          isPending ||
+                          !donationAmount ||
+                          parseFloat(donationAmount) <= 0
                         }
                       >
                         Back this project

@@ -7,6 +7,7 @@ import { getDonorCampaigns } from "../../../lib/queries/getDonorCampaigns";
 import DonorCampaigns from "../components/DonorComponent";
 import NoDonationsState from "../components/NoDonationYet";
 import LoadingComponent from "../components/LoadingComponent";
+import ConnectWalletComponent from "../components/ConnectWallet";
 import { useRouter } from "next/navigation";
 
 const DonationPage = () => {
@@ -26,7 +27,9 @@ const DonationPage = () => {
     enabled: !!address,
   });
 
-  console.log("data ", data)
+  console.log("donated data", data)
+
+  console.log("error ", error)
 
   if (error) {
     return toast.error(
@@ -48,6 +51,10 @@ const DonationPage = () => {
   
   if (!isLoading && data?.donations?.length === 0) {
     return <NoDonationsState onExplore={onExplore} />
+  }
+
+  if (!address){
+    return <ConnectWalletComponent />
   }
 
 };

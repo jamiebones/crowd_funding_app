@@ -1,4 +1,6 @@
 import Milestone from "./Milestone";
+import Donor from "./Donor";
+import DonationWithdrawn from "./DonationWithdrawn";
 
 interface CampaignContent {
     media: string[];
@@ -20,8 +22,8 @@ interface Campaign {
     amountSought:string;
     amountRaised: string;
     currentMilestone: string;
-    donors: string[]
-    donorsRecall: string[]
+    donors: Donor[]
+    donorsRecall: DonationWithdrawn[]
     backers: number;
     id: string;
     milestone: Milestone[];

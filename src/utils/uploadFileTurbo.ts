@@ -40,8 +40,12 @@ const uploadFileToArweaveUsingTurbo2 = async (turbo: TurboAuthenticatedClient,fi
 
 
 const createJSONFile = (jsonData: object) => {
+    const tempDir = '/tmp';
+    if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir);
+    }
     const jsonString = JSON.stringify(jsonData, null, 2);
-    const tempFilePath = path.join(process.cwd(), 'temp.json');
+    const tempFilePath = path.join(tempDir, 'temp.json');
     fs.writeFileSync(tempFilePath, jsonString, 'utf-8');
     return tempFilePath;
 }

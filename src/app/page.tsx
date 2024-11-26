@@ -24,9 +24,6 @@ const CrowdfundingLanding = () => {
     queryFn: getStats,
   });
 
-  console.log("stats ", stats);
-
-  console.log("stats error", statsError);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,7 +71,7 @@ const CrowdfundingLanding = () => {
               <Target className="w-12 h-12" />
               <div>
                 <h3 className="text-3xl font-bold">
-                  $RBTC{stats && +stats?.statistics[0]?.totalFundingRequest / 1e18 
+                  $RBTC {stats && +stats?.statistics[0]?.totalFundingRequest / 1e18 
                   ? +stats?.statistics[0]?.totalFundingRequest / 1e18 : 0 }+
                 </h3>
                 <p>Total Funded</p>
