@@ -24,7 +24,7 @@ import Campaign from "../interfaces/Campaign";
 import {
   getDaysBetweenEpochAndCurrent,
   isPdf,
-  countUniqueBackers,
+  countUniqueDonors,
 } from "@/utils/utility";
 import { toast } from "react-toastify";
 import { useWriteContract, useAccount } from "wagmi";
@@ -114,7 +114,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                   {campaign?.content?.title}
                 </CardTitle>
                 <CardDescription className="text-lg">
-                  {countUniqueBackers(campaign.donors as any)} backers
+                  {countUniqueDonors(campaign.donors, campaign.donorsRecall)} backers
                 </CardDescription>
               </CardHeader>
 
@@ -281,7 +281,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Backers</span>
                       <span className="font-medium">
-                        {countUniqueBackers(campaign.donors as any)}
+                        {countUniqueDonors(campaign.donors, campaign.donorsRecall)}
                       </span>
                     </div>
                     <div className="flex justify-between">

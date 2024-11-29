@@ -120,6 +120,8 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
     }
   };
 
+  console.log("projects ", projects)
+
   if (!projects) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-8 space-y-6">

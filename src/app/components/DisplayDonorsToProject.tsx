@@ -76,7 +76,7 @@ const DisplayDonorsToProject: React.FC<DonationTrackerProps> = ({donors, donorsR
                           variant="ghost" 
                           size="icon" 
                           className="h-6 w-6"
-                          onClick={() => window.open(`https://etherscan.io/address/${contribution.donor}`, '_blank')}
+                          onClick={() => window.open(`https://rootstock-testnet.blockscout.com/address/${contribution.donor}`, '_blank')}
                         >
                           <ExternalLinkIcon className="h-3 w-3" />
                         </Button>
@@ -132,7 +132,7 @@ const DisplayDonorsToProject: React.FC<DonationTrackerProps> = ({donors, donorsR
                           variant="ghost" 
                           size="icon" 
                           className="h-6 w-6"
-                          onClick={() => window.open(`https://etherscan.io/address/${withdrawal.donor}`, '_blank')}
+                          onClick={() => window.open(`https://rootstock-testnet.blockscout.com/address/address/${withdrawal.donor}`, '_blank')}
                         >
                           <ExternalLinkIcon className="h-3 w-3" />
                         </Button>

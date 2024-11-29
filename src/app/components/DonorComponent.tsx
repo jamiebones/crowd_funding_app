@@ -1,27 +1,26 @@
 "use client";
-import React, { useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Activity, Clock, Wallet } from 'lucide-react';
-import Donor from '../interfaces/Donor';
-import { getDaysBetweenEpochAndCurrent } from '@/utils/utility';
-import { useWriteContract } from "wagmi";
+import React, { useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Activity, Clock, Wallet } from "lucide-react";
+import Donor from "../interfaces/Donor";
+import { getDaysBetweenEpochAndCurrent, formatRelativeTime } from "@/utils/utility";
+import { useWriteContract, useAccount } from "wagmi";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-
-import MilestonesAccordion from './MilestoneAccordianComponent';
-
+import { canWithdrawDonation } from "../../utils/utility";
+import MilestonesAccordion from "./MilestoneAccordianComponent";
 
 import CrowdFundingImplementationABI from "../../../abis/CrowdFundingImplementation.json";
 
 interface DonationProps {
-    donations: Donor[]
+  donations: Donor[];
 }
 
 const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
-
   const router = useRouter();
+  const { address } = useAccount();
 
   const {
     data: hash,
@@ -59,7 +58,6 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
         abi: CrowdFundingImplementationABI,
         functionName: "retrieveDonatedAmount",
         args: [],
-     
       });
       console.log("finishing writing to Rootstock");
     } catch (error) {
@@ -70,8 +68,6 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
     }
   };
 
-
-  
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
@@ -91,71 +87,101 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
               const { donatingTo } = donation;
 
               return (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex justify-between items-start cursor-pointer" 
-                    onClick={() => router.push(`/projects/${donatingTo.id}`)}>
+                  <div
+                    className="flex justify-between items-start cursor-pointer"
+                    onClick={() => router.push(`/projects/${donatingTo.id}`)}
+                  >
                     <div>
                       <h3 className="text-lg font-semibold">
-                        {donatingTo?.content?.title || "The day the suspect came to roast"}
+                        {donatingTo?.content?.title ||
+                          "The day the suspect came to roast"}
                       </h3>
                       <div className="mt-2 flex items-center space-x-2">
                         <Badge variant="secondary">
                           <Activity className="h-4 w-4 mr-1" />
                           {donatingTo?.category}
                         </Badge>
-                        <Badge variant={donatingTo.campaignRunning ? 'default' : 'destructive'}>
-                          {donatingTo.campaignRunning ? 'Active' : 'Inactive'}
+                        <Badge
+                          variant={
+                            donatingTo.campaignRunning
+                              ? "default"
+                              : "destructive"
+                          }
+                        >
+                          {donatingTo.campaignRunning ? "Active" : "Inactive"}
                         </Badge>
                       </div>
                     </div>
-                    
+
                     <div className="text-right">
-                      <div >
-                        <p><span>Your donation: </span>
-                        <span className="font-bold text-green-600">{+donation.amount.toLocaleString()/ 1e18} RBTC</span></p>
+                      <div>
+                        <p>
+                          <span>Your donation: </span>
+                          <span className="font-bold text-green-600">
+                            {+donation.amount.toLocaleString() / 1e18} RBTC
+                          </span>
+                        </p>
                       </div>
                       <div className="text-sm text-gray-500 mt-1">
-                        Donated {new Date(+donation.date * 1000 ).toDateString()}
+                        Donated {new Date(+donation.date * 1000).toDateString()}
                       </div>
-                     
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 flex justify-between items-center border-t pt-3">
                     <div className="flex items-center text-sm text-gray-600">
                       <Clock className="h-4 w-4 mr-2" />
-                      {getDaysBetweenEpochAndCurrent(+donatingTo.dateCreated)} days remaining
+                      created {formatRelativeTime(
+                        +donatingTo.dateCreated
+                      )}{" "}
                     </div>
-                    <a 
-                      href={`https://etherscan.io/address/${donatingTo.contractAddress}`} 
-                      target="_blank" 
+                    <a
+                      href={`https://rootstock-testnet.blockscout.com/address/${donatingTo.contractAddress}`}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline text-sm"
                     >
                       View Contract
                     </a>
                   </div>
-                  
 
-                     {/* Milestones Accordion */}
-                {donatingTo?.milestone && donatingTo.milestone.length > 0 && (
-                  <MilestonesAccordion milestones={donatingTo.milestone} 
-                  currentMilestone={donation.donatingTo.currentMilestone} 
-                  contractAddress={donatingTo.contractAddress}/>
-                )}
+                  {/* Milestones Accordion */}
+                  {donatingTo?.milestone && donatingTo.milestone.length > 0 && (
+                    <MilestonesAccordion
+                      milestones={donatingTo.milestone}
+                      currentMilestone={donation.donatingTo.currentMilestone}
+                      contractAddress={donatingTo.contractAddress}
+                    />
+                  )}
 
-                {/*button to withdraw your donation */}
+                  {/*button to withdraw your donation */}
 
-                <div className='mt-3 text-center'>
-                  <Button size="sm" color='info' 
-                    disabled={isPending}
-                    onClick={()=>handleRetrieveDonationContract(donatingTo.contractAddress)}>
-                    Retrieve Donation
-                  </Button>
-                </div>
+                  <div className="mt-3 text-center">
+                    {canWithdrawDonation(
+                      donatingTo.donors,
+                      donatingTo.donorsRecall,
+                      address!
+                    ) ? (
+                      <Button
+                        size="sm"
+                        color="info"
+                        disabled={isPending}
+                        onClick={() =>
+                          handleRetrieveDonationContract(
+                            donatingTo.contractAddress
+                          )
+                        }
+                      >
+                        Retrieve Donation
+                      </Button>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
               );
             })}

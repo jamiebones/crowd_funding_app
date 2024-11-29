@@ -33,16 +33,6 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
     donor: string;
   }
 
-  const countUniqueBackers = function countUniqueBackers(array:Donor[] = []) {
-    let nondubArray:string[] = []
-    for (let i=0; i < array.length; i++){
-      const donor = array[i].donor as string;
-      if (!nondubArray.includes(donor)){
-        nondubArray.push(donor)
-      }
-    }
-    return nondubArray.length;
-  }
 
   function countUniqueDonors(arrayOne: Donor[], arrayTwo: DonorRecall[]) {
       const frequencyMap = new Map();
@@ -86,7 +76,16 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
   function trimAddress(address: string){
     return  `${address.slice(0, 6)}...${address.slice(-4)}`;
   }
+
+  function canWithdrawDonation(arrayOne: Donor[] = [], arrayTwo: DonorRecall[] = [], address: string = "") {
+    const donationCount = arrayOne.reduce((acc, val) => (val.donor === address ? acc + 1 : acc), 0);
+    const withdrawalCount = arrayTwo.reduce((acc, val) => (val.donor === address ? acc + 1 : acc), 0);
+    if ( donationCount > withdrawalCount ){
+      return true;
+    }
+    return false;
+  }
    
   
   export { clipTextToWords, getDaysBetweenEpochAndCurrent, isPdf, 
-    countUniqueBackers, countUniqueDonors, formatRelativeTime, trimAddress}
+    countUniqueDonors, formatRelativeTime, trimAddress, canWithdrawDonation}
