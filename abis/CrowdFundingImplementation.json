@@ -63,6 +63,11 @@
   },
   {
     "inputs": [],
+    "name": "NewDurationSmallerThanPreviousDuration",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NotInitializing",
     "type": "error"
   },
@@ -444,6 +449,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newPeriod",
+        "type": "uint256"
+      }
+    ],
+    "name": "increaseCampaignPeriod",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

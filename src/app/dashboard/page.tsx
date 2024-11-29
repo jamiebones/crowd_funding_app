@@ -7,7 +7,7 @@ import { useReadContract, useWriteContract, useAccount } from "wagmi";
 import { ethers } from "ethers";
 
 import CrowdFundingFactoryABI from "../../../abis/CrowdFundingFactory.json";
-const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS_LOCAL || "0x";
+const factoryContractAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "0x";
 
 const eth = 1_000_000_000_000_000_000;
 //interfaces
