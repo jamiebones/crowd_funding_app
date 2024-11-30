@@ -6,17 +6,21 @@ import { clipTextToWords, countUniqueDonors } from "../../utils/utility";
 import Link from "next/link";
 import Donor from "../interfaces/Donor";
 
-
-interface CampaignDisplayProps {
-  campaigns: Campaign[];
+interface SearchResult {
+    campaign: Campaign
 }
 
 
-const CampaignDisplay: React.FC<CampaignDisplayProps> = ({ campaigns }) => {
+interface CampaignDisplayProps {
+  campaigns: SearchResult[];
+}
+
+
+const SearchCampaignDisplay: React.FC<CampaignDisplayProps> = ({ campaigns }) => {
     
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {campaigns.map((campaign) => (
+      {campaigns.map(({campaign}) => (
         <Card key={campaign.contractAddress}>
           {/* <img
                 src={project.image}
@@ -73,4 +77,4 @@ const CampaignDisplay: React.FC<CampaignDisplayProps> = ({ campaigns }) => {
   );
 };
 
-export default CampaignDisplay;
+export default SearchCampaignDisplay;

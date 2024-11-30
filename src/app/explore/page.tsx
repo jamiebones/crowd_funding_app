@@ -22,6 +22,7 @@ import { getCampaignsByCategory } from "../../../lib/queries/getCampaignsByCateg
 import { searchCampaignsByContent } from "../../../lib/queries/searchCampaigns";
 import LoadingComponent from "../components/LoadingComponent";
 import Campaign from "../interfaces/Campaign";
+import SearchCampaignDisplay from "../components/SearchCampaignDisplay";
 import CampaignDisplay from "../components/CampaignDisplay";
 import EmptyCampaigns from "../components/EmptyCampaign";
 
@@ -33,10 +34,17 @@ const categories = [
   { name: "Charity", value: "Charity" },
 ];
 
+interface SearchResult {
+  campaign: Campaign
+}
+
+
+
 const SearchComponents = () => {
   const [searchText, setSearchText] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("Education");
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
 
   const {
     data,
@@ -67,21 +75,28 @@ const SearchComponents = () => {
 
   console.log("data", data);
 
+  console.log("error ", errorFromSearching);
+
   const handleSearch = () => {
     if (searchText !== "") {
       refetch();
+      //setSearchText("");
     }
   };
 
   useEffect(() => {
     if (data) {
       setCampaigns(data.campaigns);
+      setSearchResult([]);
     }
   }, [data]);
 
   useEffect(() => {
     if (dataFromSearching) {
-      setCampaigns(dataFromSearching.campaignSearch);
+      setSearchText("");
+      setCampaigns([]);
+      console.log("datafromsearching ", dataFromSearching?.campaignSearch)
+      setSearchResult(dataFromSearching?.campaignSearch);
     }
   }, [dataFromSearching]);
 
@@ -149,7 +164,9 @@ const SearchComponents = () => {
       </div>
       {campaigns.length > 0 && <CampaignDisplay campaigns={campaigns} />}
 
-      {campaigns.length === 0 && <EmptyCampaigns />}
+      {searchResult.length > 0 && <SearchCampaignDisplay campaigns={searchResult} />}
+
+      {campaigns.length === 0 || searchResult.length === 0 && <EmptyCampaigns />}
     </div>
   );
 };

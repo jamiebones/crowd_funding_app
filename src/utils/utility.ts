@@ -34,7 +34,7 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
   }
 
 
-  function countUniqueDonors(arrayOne: Donor[], arrayTwo: DonorRecall[]) {
+  function countUniqueDonors(arrayOne: Donor[] = [], arrayTwo: DonorRecall[] = []) {
       const frequencyMap = new Map();
       for (const obj of arrayTwo) {
         frequencyMap.set(obj.donor, (frequencyMap.get(obj.donor) || 0) + 1);

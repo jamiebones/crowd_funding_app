@@ -11,13 +11,15 @@ interface MilestoneCardProps {
 }
 
 const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => (
+  
   <Card className="overflow-hidden">
     {milestone?.content?.media && milestone.content.media.length > 0 && (
       <div className="grid grid-cols-2 gap-2 p-4">
         {milestone?.content?.media?.map((image, index) => (
+          
           <img
             key={index}
-            src={image}
+            src={`https://arweave.net/${image.split(":")[0]}`}
             alt={`${milestone?.content?.title} - Image ${index + 1}`}
             className="w-full h-48 object-cover rounded-lg"
           />
