@@ -11,7 +11,7 @@ const Navbar = () => {
         <nav className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-blue-600">CrowdFund</h1>
           <div className="hidden md:flex space-x-6">
-          <Link
+            <Link
               href="/"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 pathname === "/"
@@ -21,7 +21,7 @@ const Navbar = () => {
             >
               Home
             </Link>
-          <Link
+            <Link
               href="/dashboard"
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 pathname === "/dashboard"
@@ -29,7 +29,7 @@ const Navbar = () => {
                   : "text-gray-600 hover:bg-gray-700 hover:text-white"
               }`}
             >
-              Create Project
+              Create
             </Link>
 
             <Link
@@ -51,7 +51,7 @@ const Navbar = () => {
                   : "text-gray-600 hover:bg-gray-700 hover:text-white"
               }`}
             >
-              My Donations
+              Donations
             </Link>
 
             <Link
@@ -62,9 +62,19 @@ const Navbar = () => {
                   : "text-gray-600 hover:bg-gray-700 hover:text-white"
               }`}
             >
-              My Projects
+              Projects
             </Link>
-           
+
+            <Link
+              href="/metrics"
+              className={`px-3 py-2 rounded-md text-sm font-medium ${
+                pathname === "/metrics"
+                  ? "bg-gray-900 text-white"
+                  : "text-gray-600 hover:bg-gray-700 hover:text-white"
+              }`}
+            >
+              Metrics
+            </Link>
           </div>
           <div className="space-x-4">
             <ConnectButton />

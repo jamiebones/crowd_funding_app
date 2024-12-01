@@ -1,5 +1,7 @@
 "use client"
 import dayjs from "dayjs";
+import CampaignStats from "@/app/interfaces/CampaignStats";
+import GroupCategory from "@/app/interfaces/GroupCategory";
 
 
 function clipTextToWords(text: string = "Hello world", wordLimit: number) {
@@ -11,7 +13,7 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
   }
 
   function getDaysBetweenEpochAndCurrent(epochTimestamp: number):number {
-    const epochDate = dayjs.unix(epochTimestamp / 1000);
+    const epochDate = dayjs.unix(epochTimestamp);
     const currentDate = dayjs();
     const daysDifference = epochDate.diff(currentDate, 'day');
     return daysDifference > 0 ? daysDifference: 0;
@@ -85,7 +87,22 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
     }
     return false;
   }
+
+
+
+  function groupCampaignByCategory(campaignStats: CampaignStats[] = []):GroupCategory[]{
+      let campaignObject: any = {}
+      campaignStats.map((stat) => {
+         const backers = countUniqueDonors(stat.donors, stat.donorsRecall);
+        campaignObject[stat.category] = campaignObject[stat.category] ? {
+          "amountRaised": campaignObject[stat.category].amountRaised + stat.amountRaised,
+          "backers": campaignObject[stat.category].backers + backers
+        } : {"amountRaised": +stat.amountRaised/1e18, "backers": +backers, "category": stat.category}
+      });
+      
+      return Object.values(campaignObject);
+  }
    
   
   export { clipTextToWords, getDaysBetweenEpochAndCurrent, isPdf, 
-    countUniqueDonors, formatRelativeTime, trimAddress, canWithdrawDonation}
+    countUniqueDonors, formatRelativeTime, trimAddress, canWithdrawDonation, groupCampaignByCategory}

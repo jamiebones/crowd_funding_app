@@ -78,7 +78,7 @@ const MilestonesAccordion = ({
         args: [vote],
       });
     } catch (error) {
-       console.log("Error: ", error)
+      console.log("Error: ", error);
     }
   };
 
@@ -120,7 +120,8 @@ const MilestonesAccordion = ({
                     "The day is a new one we pray for"}
                 </div>
                 <div>
-                  <strong>Period to Vote:</strong> 
+                  <strong>Period to Vote:</strong>
+                  <br />
                   {getDaysBetweenEpochAndCurrent(+milestone.periodToVote)} days
                   Left
                 </div>
@@ -128,11 +129,10 @@ const MilestonesAccordion = ({
                   <strong>Date Created:</strong>{" "}
                   {new Date(+milestone.dateCreated * 1000).toDateString()}
                 </div>
-  
               </div>
 
               <div className="mt-2">
-                 <ImageDisplayComponent images={milestone?.content?.media} />
+                <ImageDisplayComponent images={milestone?.content?.media} />
               </div>
 
               <div className="mt-4 p-2">
@@ -140,25 +140,27 @@ const MilestonesAccordion = ({
 
                 {isLoading && <LoadingComponent />}
 
-                <div className="flex justify-center items-center gap-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleMilestoneVote(true)}
-                    className="flex items-center gap-2"
-                  >
-                    <ThumbsUp className="w-4 h-4" />
-                    Yes
-                  </Button>
+                {getDaysBetweenEpochAndCurrent(+milestone.periodToVote) > 0 && (
+                  <div className="flex justify-center items-center gap-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleMilestoneVote(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <ThumbsUp className="w-4 h-4" />
+                      Yes
+                    </Button>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => handleMilestoneVote(false)}
-                    className="flex items-center gap-2"
-                  >
-                    <ThumbsDown className="w-4 h-4" />
-                    No
-                  </Button>
-                </div>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleMilestoneVote(false)}
+                      className="flex items-center gap-2"
+                    >
+                      <ThumbsDown className="w-4 h-4" />
+                      No
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           )}

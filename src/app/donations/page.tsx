@@ -28,9 +28,7 @@ const DonationPage = () => {
     enabled: !!address,
   });
 
-  console.log("donated data", data)
 
-  console.log("error ", error)
 
   if (error) {
     return toast.error(

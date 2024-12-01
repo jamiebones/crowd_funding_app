@@ -24,7 +24,7 @@ const ImageDisplayComponent = ({ images = [] }: { images?: string[] }) => {
               className="relative aspect-square rounded-lg overflow-hidden bg-gray-100"
             >
               <img
-                src={image}
+                src={`https://arweave.net/${image.split(":")[0]}`}
                 alt={`Image ${index + 1}`}
                 className="object-cover w-full h-full hover:scale-105 transition-transform duration-200"
               />
