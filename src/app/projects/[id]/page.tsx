@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import ProjectDetailsComponent from "@/app/components/ProjectDetails";
 import { useQuery } from "@tanstack/react-query";
@@ -23,13 +23,6 @@ const ProjectDetailsPage: React.FC<ProjectDetailsProps> = ({ params }) => {
   });
 
   
-
-  console.log("error", error);
-
-  // useEffect(() => {
-  //   //getCampaign();
-  // }, [id]);
-
   return (
     <div className="p-4">
       {isLoading && <p>Loading......</p>}

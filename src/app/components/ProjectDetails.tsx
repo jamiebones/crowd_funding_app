@@ -35,7 +35,7 @@ import DisplayDonorsToProject from "./DisplayDonorsToProject";
 import ShareButton from "./ShareButton";
 
 import CrowdFundingContractABI from "../../../abis/CrowdFundingImplementation.json";
-const eth = 1_000_000_000_000_000_000;
+import MilestoneDisplayComponent from "./MilestoneDisplayComponent";
 
 interface ProjectDetailsProps {
   campaign: Campaign;
@@ -117,12 +117,22 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <div className="flex flex-wrap items-center gap-4 mb-4">
-                  <Badge variant="secondary">{campaign.category}</Badge>
-                  <Badge variant="outline">
-                    {getDaysBetweenEpochAndCurrent(+campaign.projectDuration / 1000)}{" "}
-                    day(s) left
-                  </Badge>
+                <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
+                  <div>
+                    <Badge variant="secondary">{campaign.category}</Badge>
+                    <Badge variant="outline">
+                      {getDaysBetweenEpochAndCurrent(
+                        +campaign.projectDuration / 1000
+                      )}{" "}
+                      day(s) left
+                    </Badge>
+                  </div>
+                  <div>
+                    <ShareButton
+                      title={campaign?.content?.title}
+                      url={`${window.location.host}/projects/${id}`}
+                    />
+                  </div>
                 </div>
                 <CardTitle className="text-3xl mb-2">
                   {campaign?.content?.title}
@@ -202,6 +212,12 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                 </div>
               </CardContent>
             </Card>
+
+            <div className="flex flex-col">
+              {campaign?.milestone && (
+                <MilestoneDisplayComponent milestones={campaign?.milestone} />
+              )}
+            </div>
             <DisplayDonorsToProject
               donors={campaign.donors}
               donorsRecall={campaign.donorsRecall}

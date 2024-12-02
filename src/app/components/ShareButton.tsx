@@ -1,25 +1,36 @@
-"use client";
 import React from 'react';
-
-
+import { Button } from "@/components/ui/button";
+import { Twitter } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ShareButton = ({ title, url }: {title: string, url: string}) => {
   const handleShare = () => {
     const text = encodeURIComponent(`Check out this amazing project: ${title}`);
     const shareUrl = encodeURIComponent(url);
-    const hashtags = encodeURIComponent("Crowdfunding,Rootstock");
+    const hashtags = encodeURIComponent("CrowdfundingContract,Rootstock");
 
     const twitterLink = `https://twitter.com/intent/tweet?text=${text}&url=${shareUrl}&hashtags=${hashtags}`;
     window.open(twitterLink, '_blank');
   };
 
   return (
-    <button
-      onClick={handleShare}
-      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-    >
-      Share on Twitter
-    </button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            variant="outline" 
+            size="icon"
+            color='primary'
+            onClick={handleShare}
+          >
+            <Twitter className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Share on Twitter</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
