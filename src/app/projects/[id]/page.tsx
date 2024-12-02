@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+
 import ProjectDetailsComponent from "@/app/components/ProjectDetails";
 import { useQuery } from "@tanstack/react-query";
 import { getCampaignDetails } from "../../../../lib/queries/getCampaignDetails";

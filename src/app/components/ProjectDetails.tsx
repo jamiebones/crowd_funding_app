@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import {
   Card,
   CardContent,
@@ -31,6 +32,7 @@ import { useWriteContract, useAccount } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { ethers } from "ethers";
 import DisplayDonorsToProject from "./DisplayDonorsToProject";
+import ShareButton from "./ShareButton";
 
 import CrowdFundingContractABI from "../../../abis/CrowdFundingImplementation.json";
 const eth = 1_000_000_000_000_000_000;
@@ -97,6 +99,18 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <Head>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={campaign?.content?.title} />
+        <meta name="twitter:description" content={campaign?.content?.details} />
+        <meta
+          name="twitter:image"
+          content={`https://arweave.net/${
+            campaign?.content?.media[0].split(":")[0]
+          }`}
+        />
+        <title>{campaign?.content?.title}</title>
+      </Head>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -106,7 +120,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                 <div className="flex flex-wrap items-center gap-4 mb-4">
                   <Badge variant="secondary">{campaign.category}</Badge>
                   <Badge variant="outline">
-                    {getDaysBetweenEpochAndCurrent(+campaign.projectDuration)}{" "}
+                    {getDaysBetweenEpochAndCurrent(+campaign.projectDuration / 1000)}{" "}
                     day(s) left
                   </Badge>
                 </div>
@@ -114,7 +128,8 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                   {campaign?.content?.title}
                 </CardTitle>
                 <CardDescription className="text-lg">
-                  {countUniqueDonors(campaign.donors, campaign.donorsRecall)} backers
+                  {countUniqueDonors(campaign.donors, campaign.donorsRecall)}{" "}
+                  backers
                 </CardDescription>
               </CardHeader>
 
@@ -227,7 +242,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                       </span>
                       <span>
                         {getDaysBetweenEpochAndCurrent(
-                          +campaign.projectDuration
+                          +campaign.projectDuration / 1000
                         )}{" "}
                         day(s) left
                       </span>
@@ -281,19 +296,26 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Backers</span>
                       <span className="font-medium">
-                        {countUniqueDonors(campaign.donors, campaign.donorsRecall)}
+                        {countUniqueDonors(
+                          campaign.donors,
+                          campaign.donorsRecall
+                        )}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Time left</span>
                       <span className="font-medium">
                         {getDaysBetweenEpochAndCurrent(
-                          +campaign.projectDuration
+                          +campaign.projectDuration / 1000
                         )}{" "}
                         days
                       </span>
                     </div>
                   </div>
+                  <ShareButton
+                    title={campaign?.content?.title}
+                    url={`${window.location.host}/projects/${id}`}
+                  />
                 </div>
               </CardContent>
             </Card>

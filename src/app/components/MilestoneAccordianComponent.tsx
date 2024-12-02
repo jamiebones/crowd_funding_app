@@ -140,7 +140,7 @@ const MilestonesAccordion = ({
 
                 {isLoading && <LoadingComponent />}
 
-                {getDaysBetweenEpochAndCurrent(+milestone.periodToVote) > 0 && (
+                {getDaysBetweenEpochAndCurrent(+milestone.periodToVote / 1000) > 0 && (
                   <div className="flex justify-center items-center gap-4">
                     <Button
                       variant="outline"

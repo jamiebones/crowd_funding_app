@@ -4,6 +4,7 @@ import MDEditor from "@uiw/react-md-editor";
 import FileUploader from "../components/FileUploader";
 import { toast } from "react-toastify";
 import { useReadContract, useWriteContract, useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
 import { ethers } from "ethers";
 
 import CrowdFundingFactoryABI from "../../../abis/CrowdFundingFactory.json";
@@ -22,6 +23,7 @@ const categoryOptions = [
 ];
 
 const CreateProject = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState<CreateProjectInterface>({
     markdownContent: "",
     title: "",
@@ -69,7 +71,9 @@ const CreateProject = () => {
         position: "top-right",
       });
       //handleRemoveFilePreview();
-      window.location.reload();
+      //window.location.reload();
+      router.push("/user/projects");
+      
     }
   }, [hash, isSuccess]);
 
