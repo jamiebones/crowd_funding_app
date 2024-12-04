@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GroupCategory from '../interfaces/GroupCategory';
 
 const CampaignMetricsComponent = ({metrics}:{metrics: GroupCategory[]}) => {
-  console.log("metrics ", metrics)
+ 
   return (
     <div className="p-4 flex justify-center">
       {/* Funding by Category */}

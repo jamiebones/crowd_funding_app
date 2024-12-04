@@ -120,7 +120,10 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
     }
   };
 
-  console.log("projects ", projects)
+  const navigateToDetails = (projectID: string) => {
+    router.push(`/projects/${projectID}`);
+  }
+
 
   if (!projects) {
     return (
@@ -195,16 +198,21 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
         ))}
       </div>
 
+      
+
       {/* Project Details - Mobile Responsive */}
       <div className="w-full md:w-1/2 lg:w-3/5 mt-4 md:mt-0">
         {selectedProject ? (
           <div>
             <Card className="h-full">
-              <CardHeader>
+              <div className="cursor-pointer">
+              <CardHeader onClick={()=>navigateToDetails(selectedProject.id)}>
                 <CardTitle className="text-2xl">
                   {selectedProject.content?.title}
                 </CardTitle>
               </CardHeader>
+              </div>
+             
               <CardContent>
                 <div className="space-y-4">
                   <p className="text-muted-foreground">

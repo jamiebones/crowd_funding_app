@@ -9,7 +9,7 @@ const Navbar = () => {
     <header className="bg-white">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-blue-600">CrowdFund</h1>
+          <h1 className="text-2xl font-bold text-blue-600">CrowdFund Dapp</h1>
           <div className="hidden md:flex space-x-6">
             <Link
               href="/"

@@ -22,6 +22,8 @@ const ProjectDetailsPage: React.FC<ProjectDetailsProps> = ({ params }) => {
     enabled: !!id,
   });
 
+ 
+
   
   return (
     <div className="p-4">

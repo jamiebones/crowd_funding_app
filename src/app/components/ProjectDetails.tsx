@@ -26,9 +26,10 @@ import {
   getDaysBetweenEpochAndCurrent,
   isPdf,
   countUniqueDonors,
+  userDonatedToCause
 } from "@/utils/utility";
 import { toast } from "react-toastify";
-import { useWriteContract, useAccount } from "wagmi";
+import { useWriteContract, useAccount, useReadContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { ethers } from "ethers";
 import DisplayDonorsToProject from "./DisplayDonorsToProject";
@@ -45,6 +46,7 @@ interface ProjectDetailsProps {
 // Rest of the component remains exactly the same
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
   const [donationAmount, setDonationAmount] = useState("");
+  const [displayVoteButton, setDisplayVoteButton ] = useState(false);
   const { address } = useAccount();
   const queryClient = useQueryClient();
 
@@ -56,6 +58,26 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
     isPending,
     isError,
   } = useWriteContract();
+
+  const { data: hasVoted, isLoading, error:readError } = useReadContract({
+    address: campaign?.contractAddress as any,
+    abi: CrowdFundingContractABI,
+    functionName: "hasVotedOnMilestone",
+    args: [ address]
+  });
+
+  const { data: totalVotes, isLoading: totalLoading, error:totalError } = useReadContract({
+    address: campaign?.contractAddress as any,
+    abi: CrowdFundingContractABI,
+    functionName: "totalVotesOnMilestone"
+  });
+
+
+  useEffect(()=> {
+    if ( hasVoted !== undefined && !isLoading && hasVoted === false && userDonatedToCause(campaign.donors, campaign.donorsRecall, address) ){
+        setDisplayVoteButton(true);
+    }
+  }, [hasVoted, address])
 
   useEffect(() => {
     if (isSuccess) {
@@ -215,7 +237,9 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
 
             <div className="flex flex-col">
               {campaign?.milestone && (
-                <MilestoneDisplayComponent milestones={campaign?.milestone} />
+                <MilestoneDisplayComponent milestones={campaign?.milestone} 
+                showVoteButton={displayVoteButton} 
+                contractAddress={campaign?.contractAddress} votes={totalVotes as string[]}/>
               )}
             </div>
             <DisplayDonorsToProject
@@ -328,10 +352,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ campaign, id }) => {
                       </span>
                     </div>
                   </div>
-                  <ShareButton
-                    title={campaign?.content?.title}
-                    url={`${window.location.host}/projects/${id}`}
-                  />
+                 
                 </div>
               </CardContent>
             </Card>

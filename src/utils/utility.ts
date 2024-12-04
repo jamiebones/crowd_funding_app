@@ -80,8 +80,17 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
   }
 
   function canWithdrawDonation(arrayOne: Donor[] = [], arrayTwo: DonorRecall[] = [], address: string = "") {
-    const donationCount = arrayOne.reduce((acc, val) => (val.donor === address ? acc + 1 : acc), 0);
-    const withdrawalCount = arrayTwo.reduce((acc, val) => (val.donor === address ? acc + 1 : acc), 0);
+    const donationCount = arrayOne.reduce((acc, val) => (val.donor.toLowerCase() === address.toLowerCase() ? acc + 1 : acc), 0);
+    const withdrawalCount = arrayTwo.reduce((acc, val) => (val.donor.toLowerCase() === address.toLowerCase() ? acc + 1 : acc), 0);
+    if ( donationCount > withdrawalCount ){
+      return true;
+    }
+    return false;
+  }
+
+  function userDonatedToCause(arrayOne: Donor[] = [], arrayTwo: DonorRecall[] = [], address: string = "") {
+    const donationCount = arrayOne.reduce((acc, val) => (val.donor.toLowerCase() === address.toLowerCase() ? acc + 1 : acc), 0);
+    const withdrawalCount = arrayTwo.reduce((acc, val) => (val.donor.toLowerCase() === address.toLowerCase() ? acc + 1 : acc), 0);
     if ( donationCount > withdrawalCount ){
       return true;
     }
@@ -105,4 +114,5 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
    
   
   export { clipTextToWords, getDaysBetweenEpochAndCurrent, isPdf, 
-    countUniqueDonors, formatRelativeTime, trimAddress, canWithdrawDonation, groupCampaignByCategory}
+    countUniqueDonors, formatRelativeTime, trimAddress, 
+    canWithdrawDonation, groupCampaignByCategory, userDonatedToCause}

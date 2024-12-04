@@ -68,6 +68,15 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
     }
   };
 
+  
+  //hasVotedOnMilestone
+
+  // const { data: fee, isLoading: isLoadingFee, error:readError } = useReadContract({
+  //   address: factoryContractAddress as any,
+  //   abi: CrowdFundingFactoryABI,
+  //   functionName: "getContractCreationFee",
+  // });
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
@@ -150,13 +159,13 @@ const DonorCampaigns: React.FC<DonationProps> = ({ donations }) => {
                   </div>
 
                   {/* Milestones Accordion */}
-                  {donatingTo?.milestone && donatingTo.milestone.length > 0 && (
+                  {/* {donatingTo?.milestone && donatingTo.milestone.length > 0 && (
                     <MilestonesAccordion
                       milestones={donatingTo.milestone}
                       currentMilestone={donation.donatingTo.currentMilestone}
                       contractAddress={donatingTo.contractAddress}
                     />
-                  )}
+                  )} */}
 
                   {/*button to withdraw your donation */}
 

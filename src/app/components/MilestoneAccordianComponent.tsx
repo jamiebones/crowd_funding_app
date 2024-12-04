@@ -61,8 +61,8 @@ const MilestonesAccordion = ({
 
   useEffect(() => {
     if (isError) {
-      console.log("Error from mutation ", error);
-      toast.error(`Error sending transaction: ${error?.message}`, {
+      console.log("Error from mutation ",);
+      toast.error(`Error sending transaction:`, {
         position: "top-right",
       });
     }
@@ -84,9 +84,9 @@ const MilestonesAccordion = ({
 
   return (
     <div className="space-y-2 mt-4 border-t pt-4">
-      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+      <h2 className="text-sm font-semibold text-gray-700 mb-2 text-center">
         Project Milestones
-      </h4>
+      </h2>
       {filteredMilestone.map((milestone) => (
         <div key={milestone.id} className="border rounded-lg overflow-hidden">
           <div
@@ -140,7 +140,8 @@ const MilestonesAccordion = ({
 
                 {isLoading && <LoadingComponent />}
 
-                {getDaysBetweenEpochAndCurrent(+milestone.periodToVote / 1000) > 0 && (
+
+                {getDaysBetweenEpochAndCurrent(+milestone.periodToVote) > 0 && (
                   <div className="flex justify-center items-center gap-4">
                     <Button
                       variant="outline"

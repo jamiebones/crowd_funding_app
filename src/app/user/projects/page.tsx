@@ -2,7 +2,7 @@
 import React from "react";
 import UserProjects from "@/app/components/UserProjects";
 import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
+import {  useAccount } from "wagmi";
 import { getUserCampaigns } from "../../../../lib/queries/getUserCampaigns";
 import LoadingComponent from "../../components/LoadingComponent";
 import EmptyCampaigns from "@/app/components/EmptyCampaign";
@@ -19,6 +19,9 @@ const UserProjectsPage = () => {
     },
     enabled: !!address,
   });
+
+  
+
 
   if (isLoading) {
     return <LoadingComponent message="Loading your projects" size="large" />;
