@@ -104,10 +104,12 @@ function clipTextToWords(text: string = "Hello world", wordLimit: number) {
       campaignStats.map((stat) => {
          const backers = countUniqueDonors(stat.donors, stat.donorsRecall);
         campaignObject[stat.category] = campaignObject[stat.category] ? {
-          "amountRaised": campaignObject[stat.category].amountRaised + stat.amountRaised,
-          "backers": campaignObject[stat.category].backers + backers
-        } : {"amountRaised": +stat.amountRaised/1e18, "backers": +backers, "category": stat.category}
+          "amountRaised": campaignObject[stat.category].amountRaised + +stat.amountRaised.toString()/1e18,
+          "backers": campaignObject[stat.category].backers + backers, "category": stat.category
+        } : {"amountRaised": +stat.amountRaised.toString()/1e18, "backers": +backers, "category": stat.category}
       });
+
+      console.log("campain object ", campaignObject)
       
       return Object.values(campaignObject);
   }
