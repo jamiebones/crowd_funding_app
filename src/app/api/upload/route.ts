@@ -69,7 +69,7 @@ export async function POST(req: Request, res: Response) {
           status: 200
         })
       } catch (error: any) {
-        console.error(`Error uploading details failed:`, error);
+        console.error(`Error when uploading details failed:`, error);
         return NextResponse.json("uploading of project details failed", {
           status: 500
         })
