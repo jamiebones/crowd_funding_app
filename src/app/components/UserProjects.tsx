@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useWriteContract, useAccount, useReadContract } from "wagmi";
 import LoadingComponent from "./LoadingComponent";
+import NotificationComponent from "./NotificationComponent";
 
 import CrowdFundingImplementationABI from "../../../abis/CrowdFundingImplementation.json";
 
@@ -59,29 +60,23 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
     isLoading,
     error: readDetailsError,
   } = useReadContract({
-    address: selectedProject?.contractAddress as any ?? undefined,
+    address: (selectedProject?.contractAddress as any) ?? undefined,
     abi: CrowdFundingImplementationABI,
     functionName: "getFundingDetails",
-  
   });
 
-  useEffect(()=> {
-    if ( projectDetails ){
+  useEffect(() => {
+    if (projectDetails) {
       const details = projectDetails as ProjectDetails;
       const projectDuration = +details[1].toString() / 1000;
       const currentEpoch = Math.floor(Date.now() / 1000);
-      if ( currentEpoch < projectDuration ){
-        setShouldDisableWithdrawal(true)
-      } else{
-        setShouldDisableWithdrawal(false)
+      if (currentEpoch < projectDuration) {
+        setShouldDisableWithdrawal(true);
+      } else {
+        setShouldDisableWithdrawal(false);
       }
     }
-
-  }, [projectDetails])
-
- 
-
-
+  }, [projectDetails]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -122,8 +117,7 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
 
   const navigateToDetails = (projectID: string) => {
     router.push(`/projects/${projectID}`);
-  }
-
+  };
 
   if (!projects) {
     return (
@@ -146,9 +140,19 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 p-4">
+      <div className="m-auto">
+       
+      </div>
+
       {/* Projects List - Mobile First Responsive */}
       <div className="w-full md:w-1/2 lg:w-2/5 space-y-4 md:pr-4">
         <h2 className="text-2xl font-bold mb-4">My Projects</h2>
+        <NotificationComponent
+          message="Withdrawal of milestone"
+          description="Project owners can withdraw a maximum 
+        of three milestone. The first milestone can be withdrawn without voting after the project end time has elapsed. The other two
+        milestone requires a vote of two-third support from donors before withdrawing."
+        />
 
         <div className="flex flex-col">
           <p className="text-sm text-muted-foreground">
@@ -198,21 +202,21 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
         ))}
       </div>
 
-      
-
       {/* Project Details - Mobile Responsive */}
       <div className="w-full md:w-1/2 lg:w-3/5 mt-4 md:mt-0">
         {selectedProject ? (
           <div>
             <Card className="h-full">
               <div className="cursor-pointer">
-              <CardHeader onClick={()=>navigateToDetails(selectedProject.id)}>
-                <CardTitle className="text-2xl">
-                  {selectedProject.content?.title}
-                </CardTitle>
-              </CardHeader>
+                <CardHeader
+                  onClick={() => navigateToDetails(selectedProject.id)}
+                >
+                  <CardTitle className="text-2xl">
+                    {selectedProject.content?.title}
+                  </CardTitle>
+                </CardHeader>
               </div>
-             
+
               <CardContent>
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
@@ -262,7 +266,12 @@ const UserProjects: React.FC<CampaignCreatorProps> = ({ projects }) => {
                     ) : (
                       <Button
                         className="w-1/2"
-                        disabled={shouldDisableWithdrawal || !address || isPending}
+                        disabled={
+                          +selectedProject.amountRaised == 0 ||
+                          shouldDisableWithdrawal ||
+                          !address ||
+                          isPending
+                        }
                         onClick={() =>
                           withdrawMilestoneAmount(
                             selectedProject.contractAddress
